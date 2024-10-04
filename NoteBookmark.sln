@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.ServiceDefault
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.AppHost", "NoteBookmark.AppHost\NoteBookmark.AppHost.csproj", "{49440529-42B9-497D-8F2F-D0A2DE20253E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.Domain", "NoteBookmark.Domain\NoteBookmark.Domain.csproj", "{204E2DC3-7131-4D7C-BA02-68AD272F9C58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -487,3 +487,4 @@ $RECYCLE.BIN/
 
 
 NoteBookmark.Api/obj/
+NoteBookmark.Api/appsettings.Development.json
