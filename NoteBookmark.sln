@@ -5,6 +5,10 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoteBookmark.Api", "NoteBookmark.Api\NoteBookmark.Api.csproj", "{482A0C21-91F3-4B77-B8CD-E1241D33B40D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.ServiceDefaults", "NoteBookmark.ServiceDefaults\NoteBookmark.ServiceDefaults.csproj", "{B3C00A0B-AFF2-4CF2-8A24-98430BC0206B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.AppHost", "NoteBookmark.AppHost\NoteBookmark.AppHost.csproj", "{49440529-42B9-497D-8F2F-D0A2DE20253E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{482A0C21-91F3-4B77-B8CD-E1241D33B40D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{482A0C21-91F3-4B77-B8CD-E1241D33B40D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{482A0C21-91F3-4B77-B8CD-E1241D33B40D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3C00A0B-AFF2-4CF2-8A24-98430BC0206B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3C00A0B-AFF2-4CF2-8A24-98430BC0206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3C00A0B-AFF2-4CF2-8A24-98430BC0206B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3C00A0B-AFF2-4CF2-8A24-98430BC0206B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49440529-42B9-497D-8F2F-D0A2DE20253E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
