@@ -1,0 +1,38 @@
+﻿@page "/posts"
+@attribute [StreamRendering]
+@inject PostNoteClient client
+@inject IJSRuntime jsRuntime
+
+<PageTitle>Posts</PageTitle>
+
+<h1>Posts</h1>
+
+@if (posts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FluentDataGrid Id="postgrid" Items="@posts">
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
+        <PropertyColumn Title="Published" Property="@(c => c!.Date_published)" Sortable="true"/>
+        <TemplateColumn>
+            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">...</FluentButton>
+        </TemplateColumn>
+    </FluentDataGrid>
+}
+
+@code {
+    private IQueryable<Post>? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var urPosts = await client.GetUnreadPosts();
+        posts = urPosts.AsQueryable();
+    }
+
+    private async Task OpenUrlInNewWindow(string? url)
+    {
+        await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+    }
+}

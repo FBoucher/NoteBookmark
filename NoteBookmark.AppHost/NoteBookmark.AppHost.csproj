@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NoteBookmark.Api\NoteBookmark.Api.csproj" />
+    <ProjectReference Include="..\NoteBookmark.BlazorApp\NoteBookmark.BlazorApp.csproj" />
   </ItemGroup>
 
 </Project>

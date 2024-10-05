@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.AppHost", "Not
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.Domain", "NoteBookmark.Domain\NoteBookmark.Domain.csproj", "{204E2DC3-7131-4D7C-BA02-68AD272F9C58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteBookmark.BlazorApp", "NoteBookmark.BlazorApp\NoteBookmark.BlazorApp.csproj", "{91470C33-E926-409D-8C0B-3647D7D5848B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{204E2DC3-7131-4D7C-BA02-68AD272F9C58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91470C33-E926-409D-8C0B-3647D7D5848B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91470C33-E926-409D-8C0B-3647D7D5848B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91470C33-E926-409D-8C0B-3647D7D5848B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91470C33-E926-409D-8C0B-3647D7D5848B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,9 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<NoteBookmark_Api>("api");
+var api = builder.AddProject<NoteBookmark_Api>("api");
+
+builder.AddProject<NoteBookmark_BlazorApp>("blazorApp")
+    .WithReference(api);    
 
 builder.Build().Run();
