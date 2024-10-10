@@ -10,10 +10,10 @@ builder.AddServiceDefaults();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-string? connStr = builder.Configuration.GetConnectionString("DataStorageConnStr");
+string? connStr = builder.Configuration.GetConnectionString("data-storage-connstr");
 if (string.IsNullOrEmpty(connStr))
 {
-    throw new InvalidOperationException("Connection string 'DataStorageConnStr' is not configured.");
+    throw new InvalidOperationException("Connection string 'data-storage-connstr' is not configured.");
 }
 builder.Services.AddTransient<IDataStorageService, DataStorageService>(sp => new DataStorageService(connStr));
 

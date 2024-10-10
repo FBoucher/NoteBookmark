@@ -38,7 +38,7 @@ properties:
           - name: OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY
             value: in_memory
     scale:
-      minReplicas: 1
+      minReplicas: 0
 tags:
   azd-service-name: api
   aspire-resource-name: api
