@@ -10,16 +10,18 @@ builder.AddServiceDefaults();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-string? connStr = builder.Configuration.GetConnectionString("data-storage-connstr");
-if (string.IsNullOrEmpty(connStr))
-{
-    throw new InvalidOperationException("Connection string 'data-storage-connstr' is not configured.");
-}
+string connStr = Environment.GetEnvironmentVariable("data-storage-connstr")?? string.Empty;
+
 builder.Services.AddTransient<IDataStorageService, DataStorageService>(sp => new DataStorageService(connStr));
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+if (string.IsNullOrEmpty(connStr))
+{
+    app.Logger.LogWarning("Connection string 'data-storage-connstr' is not configured.");
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
