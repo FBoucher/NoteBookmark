@@ -20,6 +20,7 @@ jobs:
             AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
             AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
             AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+            data-storage-connstr : ${{secrets.DATA_STORAGE_CONNSTR }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
