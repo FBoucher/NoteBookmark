@@ -9,6 +9,7 @@ var api = builder.AddProject<NoteBookmark_Api>("api")
             .WithEnvironment("data-storage-connstr",connectionString);
 
 builder.AddProject<NoteBookmark_BlazorApp>("blazor-app")
-    .WithReference(api);
+    .WithReference(api)
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();
