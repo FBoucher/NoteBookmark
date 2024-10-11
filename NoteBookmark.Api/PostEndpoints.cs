@@ -35,7 +35,7 @@ public static class PostEndpoints
 		try
 		{
 			dataStorageService.CreateNote(note);
-			return TypedResults.Created($"/api/notes/{note.Id}", note);
+			return TypedResults.Created($"/api/notes/{note.RowKey}", note);
 		}
 		catch (Exception)
 		{

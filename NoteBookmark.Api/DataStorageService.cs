@@ -76,7 +76,7 @@ public class DataStorageService(string connectionString):IDataStorageService
     public void CreateNote(Note note)
     {
         var tblNote = GetNoteTable();
-        var existingNote = tblNote.Query<Note>(filter: $"RowKey eq '{note.Id}'").FirstOrDefault();
+        var existingNote = tblNote.Query<Note>(filter: $"RowKey eq '{note.RowKey}'").FirstOrDefault();
         if (existingNote != null)
         {
             tblNote.UpdateEntity(note, ETag.All, TableUpdateMode.Replace);
