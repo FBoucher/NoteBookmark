@@ -1,4 +1,5 @@
 ﻿@page "/posts"
+@using NoteBookmark.Domain
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
 @rendermode InteractiveServer
@@ -15,7 +16,7 @@ else
 {
     <FluentDataGrid Id="postgrid" Items="@posts" >
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
-        <PropertyColumn Title="Published" Property="@(c => c!.Date_published)" Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
+        <PropertyColumn Title="Published" Property="@(c => c!.Date_published)"  Format="yyyy-MM-dd" Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
         <TemplateColumn>
             <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">...</FluentButton>
         </TemplateColumn>

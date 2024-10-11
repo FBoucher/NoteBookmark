@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Http.HttpResults;
+using NoteBookmark.Domain;
 
 namespace NoteBookmark.Api;
 

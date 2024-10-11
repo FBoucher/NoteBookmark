@@ -2,6 +2,7 @@ using System;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using NoteBookmark.Domain;
 
 namespace NoteBookmark.Api;
 
@@ -33,6 +34,12 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
+	private TableClient GetSummaryTable()
+    {
+        TableClient table = GetTable("Summary");
+        return table;
+    }
+
 	public List<Post> GetFilteredPosts(string filter)
 	{
 		var tblPosts = GetPostTable();
@@ -52,4 +59,11 @@ public class DataStorageService(string connectionString):IDataStorageService
         return post;
     }
 
+    public List<Summary> GetSummaries()
+    {
+        var tblSummary = GetSummaryTable();
+        Pageable<Summary> queryResult = tblSummary.Query<Summary>();
+        List<Summary> Summaries = queryResult.ToList<Summary>();
+        return Summaries;
+    }
 }

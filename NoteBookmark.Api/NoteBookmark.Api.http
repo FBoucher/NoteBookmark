@@ -1,6 +1,6 @@
 @NoteBookmark.Api_HostAddress = http://localhost:5003
 
-GET {{NoteBookmark.Api_HostAddress}}/weatherforecast/
+GET {{NoteBookmark.Api_HostAddress}}/GetUnreadPosts/
 Accept: application/json
 
 ###
