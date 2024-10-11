@@ -1,6 +1,9 @@
 ﻿
 using System.Runtime.Serialization;
 using Azure.Data.Tables;
+
+namespace NoteBookmark.Domain;
+
 /// <summary>Data saved to Azure Table Storage from a post in the pre-read process</summary>
 public class Post : ITableEntity
 {
@@ -47,11 +50,11 @@ public class Post : ITableEntity
     public bool? is_read { get; set; }
 
     [DataMember(Name="id")]
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
-    public string PartitionKey { get; set; }
+    public required string PartitionKey { get; set; }
 
-    public string RowKey { get; set; }
+    public required string RowKey { get; set; }
 
     public DateTimeOffset? Timestamp { get; set; }
 

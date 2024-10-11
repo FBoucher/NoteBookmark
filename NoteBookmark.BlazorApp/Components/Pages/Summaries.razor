@@ -1,0 +1,33 @@
+﻿@page "/summaries"
+@using NoteBookmark.Domain
+@inject PostNoteClient client
+@inject IJSRuntime jsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Summaries</PageTitle>
+
+<h1>Summaries</h1>
+
+@if (summaries == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FluentDataGrid Id="postgrid" Items="@summaries" >
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
+        <PropertyColumn Title="Created" Property="@(c => c!.Timestamp)" Format="yyyy-MM-dd"  Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
+    </FluentDataGrid>
+}
+
+@code {
+    private IQueryable<Summary>? summaries;
+    private GridSort<Summary> defSort = GridSort<Summary>.ByDescending(c => c.Timestamp);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var urPosts = await client.GetSummaries();
+        summaries = urPosts.AsQueryable();
+    }
+
+}
