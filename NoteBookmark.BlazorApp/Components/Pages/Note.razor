@@ -1,0 +1,42 @@
+@page "/note"
+@using NoteBookmark.Domain
+@inject PostNoteClient client
+@inject NavigationManager navigationManager
+
+<PageTitle>Note</PageTitle>
+
+<h3>Create a Note</h3>
+
+<EditForm Model="@note" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="comment">Comment:</label>
+        <InputText id="comment" @bind-Value="note.Comment" />
+    </div>
+    <div>
+        <label for="tags">Tags:</label>
+        <InputText id="tags" @bind-Value="note.Tags" />
+    </div>
+    <div>
+        <label for="postId">Post ID:</label>
+        <InputText id="postId" @bind-Value="note.PostId" />
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
+
+@code {
+    private Note note = new Note();
+
+    private async Task HandleValidSubmit()
+    {
+        note.Id = Guid.NewGuid().ToString();
+        note.DateAdded = DateTime.UtcNow;
+
+        await client.CreateNote(note);
+        navigationManager.NavigateTo("/");
+    }
+}

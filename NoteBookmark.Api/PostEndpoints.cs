@@ -15,6 +15,8 @@ public static class PostEndpoints
 			.WithDescription("Get all unread posts");
 		endpoints.MapGet("/{id}", Get)
 			.WithDescription("Get a post by id");
+		endpoints.MapPost("/notes", CreateNote)
+			.WithDescription("Create a new note");
 	}
 	
 	static List<Post> GetUnreadPosts(IDataStorageService dataStorageService)
@@ -27,7 +29,17 @@ public static class PostEndpoints
 		var post = dataStorageService.GetPost(id);
 		return post is null ? TypedResults.NotFound() : TypedResults.Ok(post);
 	}
-	
-	
 
+	static Results<Created<Note>, BadRequest> CreateNote(Note note, IDataStorageService dataStorageService)
+	{
+		try
+		{
+			dataStorageService.CreateNote(note);
+			return TypedResults.Created($"/api/notes/{note.Id}", note);
+		}
+		catch (Exception)
+		{
+			return TypedResults.BadRequest();
+		}
+	}
 }

@@ -40,6 +40,12 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
+    private TableClient GetNoteTable()
+    {
+        TableClient table = GetTable("Notes");
+        return table;
+    }
+
 	public List<Post> GetFilteredPosts(string filter)
 	{
 		var tblPosts = GetPostTable();
@@ -65,5 +71,19 @@ public class DataStorageService(string connectionString):IDataStorageService
         Pageable<Summary> queryResult = tblSummary.Query<Summary>();
         List<Summary> Summaries = queryResult.ToList<Summary>();
         return Summaries;
+    }
+
+    public void CreateNote(Note note)
+    {
+        var tblNote = GetNoteTable();
+        var existingNote = tblNote.Query<Note>(filter: $"RowKey eq '{note.Id}'").FirstOrDefault();
+        if (existingNote != null)
+        {
+            tblNote.UpdateEntity(note, ETag.All, TableUpdateMode.Replace);
+        }
+        else
+        {
+            tblNote.AddEntity(note);
+        }
     }
 }
