@@ -13,9 +13,9 @@
 }
 else
 {
-    <FluentDataGrid Id="postgrid" Items="@posts">
+    <FluentDataGrid Id="postgrid" Items="@posts" >
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
-        <PropertyColumn Title="Published" Property="@(c => c!.Date_published)" Sortable="true"/>
+        <PropertyColumn Title="Published" Property="@(c => c!.Date_published)" Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
         <TemplateColumn>
             <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">...</FluentButton>
         </TemplateColumn>
@@ -24,6 +24,7 @@ else
 
 @code {
     private IQueryable<Post>? posts;
+    private GridSort<Post> defSort = GridSort<Post>.ByDescending(c => c.Date_published);
 
     protected override async Task OnInitializedAsync()
     {

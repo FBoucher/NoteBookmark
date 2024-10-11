@@ -490,3 +490,6 @@ NoteBookmark.Api/obj/
 NoteBookmark.Api/appsettings.Development.json
 
 NoteBookmark.BlazorApp/appsettings.Development.json
+.azure
+
+NoteBookmark.AppHost/appsettings.Development.json
