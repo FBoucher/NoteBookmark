@@ -1,6 +1,10 @@
 @page "/note"
+@page "/note/{postId}"
 @using NoteBookmark.Domain
 @inject PostNoteClient client
+@inject IToastService toastService
+@inject IJSRuntime jsRuntime
+
 @rendermode InteractiveServer
 
 <PageTitle>Note</PageTitle>
@@ -22,11 +26,6 @@
             <FluentValidationMessage For="@(() => note.Tags)" />
         </div>
 
-        <div>
-            <FluentTextField Name="PostId" Label="Post ID" @bind-Value="note.PostId" Required="true" />
-            <FluentValidationMessage For="@(() => note.PostId)" />
-        </div>
-
         <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
 
     </FluentStack>
@@ -34,15 +33,20 @@
 </EditForm>
 
 
-@* <FluentForm Model="@note" OnValidSubmit="@HandleValidSubmit">
-    <FluentTextField Label="Comment" @bind-Value="note.Comment" Required="true" />
-    <FluentTextField Label="Tags" @bind-Value="note.Tags" />
-    <FluentTextField Label="Post ID" @bind-Value="note.PostId" Required="true" />
-    <FluentButton Type="ButtonType.Submit">Submit</FluentButton>
-</FluentForm>  *@
 
 @code {
+    [Parameter]
+    public string? postId { get; set; }
+
     private Domain.Note note = new Domain.Note();
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(postId))
+        {
+            note.PostId = postId;
+        }
+    }
 
     private async Task HandleValidSubmit()
     {
@@ -50,5 +54,12 @@
 
         await client.CreateNote(note);
 
+        ShowConfirmationMessage();
+        await jsRuntime.InvokeVoidAsync("open", $"/posts");
+    }
+
+    private void ShowConfirmationMessage()
+    {
+        toastService.ShowSuccess("Note created successfully!");
     }
 }
