@@ -2,6 +2,9 @@
 @page "/note/{postId}"
 @using NoteBookmark.Domain
 @inject PostNoteClient client
+@inject IToastService toastService
+@inject IJSRuntime jsRuntime
+
 @rendermode InteractiveServer
 
 <PageTitle>Note</PageTitle>
@@ -29,7 +32,7 @@
 
 </EditForm>
 
-<FluentToastContainer />
+
 
 @code {
     [Parameter]
@@ -52,11 +55,11 @@
         await client.CreateNote(note);
 
         ShowConfirmationMessage();
+        await jsRuntime.InvokeVoidAsync("open", $"/posts");
     }
 
     private void ShowConfirmationMessage()
     {
-        var toastService = new FluentToastService();
-        toastService.ShowToast("Note created successfully!", ToastType.Success);
+        toastService.ShowSuccess("Note created successfully!");
     }
 }
