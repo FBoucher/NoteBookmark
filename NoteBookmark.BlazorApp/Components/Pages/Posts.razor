@@ -1,4 +1,4 @@
-﻿@page "/posts"
+@page "/posts"
 @using NoteBookmark.Domain
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
@@ -14,11 +14,14 @@
 }
 else
 {
-    <FluentDataGrid Id="postgrid" Items="@posts" >
+    <FluentDataGrid Id="postgrid" Items="@posts">
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
         <PropertyColumn Title="Published" Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
         <TemplateColumn>
-            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">...</FluentButton>
+            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">Open</FluentButton>
+            <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))">
+                <FluentIcon Value="@(new Icons.Regular.Size20.NoteAdd())" Color="Color.Accent" />
+            </FluentButton>
         </TemplateColumn>
     </FluentDataGrid>
 }
@@ -36,5 +39,10 @@ else
     private async Task OpenUrlInNewWindow(string? url)
     {
         await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+    }
+
+    private async Task CreateNoteForPost(string postId)
+    {
+        await jsRuntime.InvokeVoidAsync("open", $"/note?postId={postId}", "_self");
     }
 }
