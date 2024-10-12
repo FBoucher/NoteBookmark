@@ -10,4 +10,6 @@ public interface IDataStorageService
 	public Post? GetPost(string rowKey);
 
 	public List<Summary> GetSummaries();
+
+    public void CreateNote(Note note);
 }

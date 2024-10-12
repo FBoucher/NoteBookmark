@@ -1,0 +1,54 @@
+@page "/note"
+@using NoteBookmark.Domain
+@inject PostNoteClient client
+@rendermode InteractiveServer
+
+<PageTitle>Note</PageTitle>
+
+<h3>Create a Note</h3>
+
+<EditForm Model="@note" OnValidSubmit="@HandleValidSubmit"  FormName="new_note">
+    <DataAnnotationsValidator />
+    <FluentValidationSummary />
+
+    <FluentStack Orientation="Orientation.Vertical">
+        <div>
+            <FluentTextField Name="Comment" Label="Comment" @bind-Value="note.Comment" Required="true" />
+            <FluentValidationMessage For="@(() => note.Comment)" />
+        </div>
+
+        <div>
+            <FluentTextField Name="Tags" Label="Tags" @bind-Value="note.Tags" />
+            <FluentValidationMessage For="@(() => note.Tags)" />
+        </div>
+
+        <div>
+            <FluentTextField Name="PostId" Label="Post ID" @bind-Value="note.PostId" Required="true" />
+            <FluentValidationMessage For="@(() => note.PostId)" />
+        </div>
+
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
+
+    </FluentStack>
+
+</EditForm>
+
+
+@* <FluentForm Model="@note" OnValidSubmit="@HandleValidSubmit">
+    <FluentTextField Label="Comment" @bind-Value="note.Comment" Required="true" />
+    <FluentTextField Label="Tags" @bind-Value="note.Tags" />
+    <FluentTextField Label="Post ID" @bind-Value="note.PostId" Required="true" />
+    <FluentButton Type="ButtonType.Submit">Submit</FluentButton>
+</FluentForm>  *@
+
+@code {
+    private Domain.Note note = new Domain.Note();
+
+    private async Task HandleValidSubmit()
+    {
+        note.DateAdded = DateTime.UtcNow;
+
+        await client.CreateNote(note);
+
+    }
+}
