@@ -1,8 +1,10 @@
 @page "/posts"
+@using NoteBookmark.BlazorApp.Components.Shared
 @using NoteBookmark.Domain
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
 @inject IToastService toastService
+@inject IDialogService DialogService
 @rendermode InteractiveServer
 
 <PageTitle>Posts</PageTitle>
@@ -46,34 +48,22 @@ else
 
     private async Task CreateNoteForPost(string postId)
     {
-        // Open the NoteDialog component as a dialog
-        var parameters = new Dictionary<string, object>
-        {
-            { "PostId", postId }
-        };
+        var newNote = new Note { PostId = postId };
 
-        var dialog = DialogService.Show<NoteDialog>("Create Note", parameters);
+        IDialogReference dialog = await DialogService.ShowDialogAsync<NoteDialog>(newNote, new DialogParameters(){
+            Height = "600px",
+            Title = "Add a note",
+            PreventDismissOnOverlayClick = true,
+            PreventScroll = true,
+        });
+
         var result = await dialog.Result;
-
-        if (!result.Cancelled)
+        if (!result.Cancelled && result.Data != null)
         {
-            await CreateNote();
+            var note = (Note)result.Data;
+            await client.CreateNote(note);
+            ShowConfirmationMessage();
         }
-    }
-
-    private async Task CreateNote()
-    {
-        // Call the API to create the note
-        var note = new Note
-        {
-            PostId = postId,
-            DateAdded = DateTime.UtcNow
-        };
-
-        await client.CreateNote(note);
-
-        // Display a success toast message
-        ShowConfirmationMessage();
     }
 
     private void ShowConfirmationMessage()

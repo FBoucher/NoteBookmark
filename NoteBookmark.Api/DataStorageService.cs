@@ -83,7 +83,7 @@ public class DataStorageService(string connectionString):IDataStorageService
         }
         else
         {
-            tblNote.AddEntity(note);
+            tblNote.AddEntity<Note>(note);
         }
     }
 }
