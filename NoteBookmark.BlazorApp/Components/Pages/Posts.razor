@@ -2,6 +2,7 @@
 @using NoteBookmark.Domain
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
+@inject IToastService toastService
 @rendermode InteractiveServer
 
 <PageTitle>Posts</PageTitle>
@@ -45,6 +46,38 @@ else
 
     private async Task CreateNoteForPost(string postId)
     {
-        await jsRuntime.InvokeVoidAsync("open", $"/note?postId={postId}", "_self");
+        // Open the NoteDialog component as a dialog
+        var parameters = new Dictionary<string, object>
+        {
+            { "PostId", postId }
+        };
+
+        var dialog = DialogService.Show<NoteDialog>("Create Note", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await CreateNote();
+        }
+    }
+
+    private async Task CreateNote()
+    {
+        // Call the API to create the note
+        var note = new Note
+        {
+            PostId = postId,
+            DateAdded = DateTime.UtcNow
+        };
+
+        await client.CreateNote(note);
+
+        // Display a success toast message
+        ShowConfirmationMessage();
+    }
+
+    private void ShowConfirmationMessage()
+    {
+        toastService.ShowSuccess("Note created successfully!");
     }
 }
