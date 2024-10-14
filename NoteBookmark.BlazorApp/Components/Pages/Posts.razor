@@ -18,26 +18,31 @@
 else
 {
     <FluentDataGrid Id="postgrid" Items="@posts">
-        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
-        <PropertyColumn Title="Published" Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
-        <TemplateColumn>
-            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))">Open</FluentButton>
-            <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))">
-                <FluentIcon Value="@(new Icons.Regular.Size20.NoteAdd())" Color="Color.Accent" />
-            </FluentButton>
+        <TemplateColumn Width="170px">
+            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size24.Open())" />
+            <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
+            @if (!string.IsNullOrEmpty(context!.NoteId))
+            {
+                <span><FluentIcon Value="@(new Icons.Filled.Size20.CalligraphyPenCheckmark())" /></span>
+            }
         </TemplateColumn>
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
+        <PropertyColumn Title="Published" 
+                        Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  
+                        Sortable="true" SortBy="@defSort" 
+                        IsDefaultSortColumn="true" 
+                        Width="130px"/>
     </FluentDataGrid>
 
-    
 }
 
 @code {
-    private IQueryable<Post>? posts;
-    private GridSort<Post> defSort = GridSort<Post>.ByDescending(c => c.Date_published);
+    private IQueryable<PostL>? posts;
+    private GridSort<PostL> defSort = GridSort<PostL>.ByDescending(c => c.Date_published);
 
     protected override async Task OnInitializedAsync()
     {
-        var urPosts = await client.GetUnreadPosts();
+        List<PostL> urPosts = await client.GetUnreadPosts();
         posts = urPosts.AsQueryable();
     }
 
@@ -51,10 +56,10 @@ else
         var newNote = new Note { PostId = postId };
 
         IDialogReference dialog = await DialogService.ShowDialogAsync<NoteDialog>(newNote, new DialogParameters(){
-            Height = "600px",
             Title = "Add a note",
             PreventDismissOnOverlayClick = true,
             PreventScroll = true,
+
         });
 
         var result = await dialog.Result;

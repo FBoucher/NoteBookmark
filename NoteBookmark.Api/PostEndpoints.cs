@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
+using static NoteBookmark.Api.DataStorageService;
 
 namespace NoteBookmark.Api;
 
@@ -19,7 +20,7 @@ public static class PostEndpoints
 			.WithDescription("Create a new note");
 	}
 	
-	static List<Post> GetUnreadPosts(IDataStorageService dataStorageService)
+	static List<PostL> GetUnreadPosts(IDataStorageService dataStorageService)
 	{
 		return dataStorageService.GetFilteredPosts("is_read eq false");
 	}

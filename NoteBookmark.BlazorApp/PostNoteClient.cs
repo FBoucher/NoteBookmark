@@ -5,10 +5,10 @@ namespace NoteBookmark.BlazorApp;
 
 public class PostNoteClient(HttpClient httpClient)
 {
-    public async Task<List<Post>> GetUnreadPosts()
+    public async Task<List<PostL>> GetUnreadPosts()
     {
-        var posts = await httpClient.GetFromJsonAsync<List<Post>>("api/posts");
-        return posts ?? new List<Post>();
+        var posts = await httpClient.GetFromJsonAsync<List<PostL>>("api/posts");
+        return posts ?? new List<PostL>();
     }
 
     public async Task<List<Summary>> GetSummaries()
