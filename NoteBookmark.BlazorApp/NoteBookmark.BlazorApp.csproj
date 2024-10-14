@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-*" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-*" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Themes" Version="4.*-*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@
 <FluentLayout>
     <FluentHeader>
         NoteBookmark.BlazorApp
+        <FluentButton OnClick="ToggleTheme">Toggle Theme</FluentButton>
     </FluentHeader>
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
         <NavMenu />
@@ -29,3 +30,15 @@
     <a class="dismiss">🗙</a>
 </div>
 
+@code {
+    private bool isDarkTheme = false;
+
+    private void ToggleTheme()
+    {
+        isDarkTheme = !isDarkTheme;
+        var themeClass = isDarkTheme ? "dark-theme" : "light-theme";
+        var body = document.body;
+        body.classList.remove("dark-theme", "light-theme");
+        body.classList.add(themeClass);
+    }
+}
