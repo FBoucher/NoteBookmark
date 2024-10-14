@@ -46,14 +46,35 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
-	public List<Post> GetFilteredPosts(string filter)
+    public List<PostL> GetFilteredPosts(string filter)
 	{
 		var tblPosts = GetPostTable();
 
         Pageable<Post> posts;
-        posts = tblPosts.Query<Post>(filter:filter);
-        
-        List<Post> lstPosts = posts.ToList<Post>();
+        posts = tblPosts.Query<Post>(filter: filter);
+        var tblNotes = GetNoteTable();
+        var notes = tblNotes.Query<Note>();
+
+        var joinedResults = from post in posts
+                            join note in notes on post.RowKey equals note.PostId into postsnotes
+                            from joined in postsnotes.DefaultIfEmpty()
+                            orderby post.Timestamp
+                            select new PostL
+                            { 
+                                PartitionKey = post.PartitionKey,
+                                RowKey = post.RowKey,
+                                Timestamp = post.Timestamp,
+                                ETag = post.ETag,
+                                Id = post.Id,
+                                Date_published = post.Date_published ?? "0000-00-00",
+                                is_read = post.is_read ?? false,
+                                Title = post.Title ?? string.Empty, 
+                                Url = post.Url ?? string.Empty, 
+                                Note = joined?.Comment ?? string.Empty, 
+                                NoteId = joined?.RowKey ?? string.Empty 
+                            };
+
+        List<PostL> lstPosts = joinedResults.ToList();
         return lstPosts;
 	}
 
@@ -83,7 +104,9 @@ public class DataStorageService(string connectionString):IDataStorageService
         }
         else
         {
-            tblNote.AddEntity(note);
+            tblNote.AddEntity<Note>(note);
         }
     }
 }
+
+

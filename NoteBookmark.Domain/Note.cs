@@ -34,4 +34,8 @@ public class Note : ITableEntity
 
     public Azure.ETag ETag { get; set; }
 
+    public bool Validate()
+    {
+        return !string.IsNullOrWhiteSpace(Comment);
+    }
 }
