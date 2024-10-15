@@ -1,9 +1,28 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 
 <FluentLayout>
     <FluentHeader>
-        NoteBookmark.BlazorApp
+        Note Bookmark
+        <FluentSpacer />
+        <FluentDesignTheme @bind-Mode="@Mode" @bind-OfficeColor="@OfficeColor" StorageName="theme" />
+        @* <FluentStack Orientation="Orientation.Horizontal">
+            <FluentSelect   Label="Theme" Width="150px" 
+                            Items="@(Enum.GetValues<DesignThemeModes>())"
+                            @bind-SelectedOption="@Mode" />
+            <FluentSelect   Label="Color" 
+                            Items="@(Enum.GetValues<OfficeColor>().Select(i => (OfficeColor?)i))"
+                Height="200px" Width="250px" @bind-SelectedOption="@OfficeColor">
+                <OptionTemplate>
+                    <FluentStack>
+                        <FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())" Color="Color.Custom"
+                            CustomColor="@(@context.ToAttributeValue() != "default" ? context.ToAttributeValue() : "#036ac4" )" />
+                        <FluentLabel>@context</FluentLabel>
+                    </FluentStack>
+                </OptionTemplate>
+            </FluentSelect> 
+        </FluentStack>*@
     </FluentHeader>
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
         <NavMenu />
@@ -20,8 +39,8 @@
     </FluentFooter>
 </FluentLayout>
 
-<FluentToastProvider @rendermode="RenderMode.InteractiveServer"  />
-<FluentDialogProvider @rendermode="RenderMode.InteractiveServer"  />
+<FluentToastProvider @rendermode="RenderMode.InteractiveServer" />
+<FluentDialogProvider @rendermode="RenderMode.InteractiveServer" />
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
@@ -29,3 +48,8 @@
     <a class="dismiss">🗙</a>
 </div>
 
+@code {
+
+    public DesignThemeModes Mode { get; set; }
+    public OfficeColor? OfficeColor { get; set; }
+}
