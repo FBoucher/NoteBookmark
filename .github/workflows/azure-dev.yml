@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
@@ -30,6 +30,12 @@ jobs:
 
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
+
+      - name: Getting Nuget Informations
+        run: dotnet nuget list source
+
+      - name: Getting .NET Informations
+        run: dotnet workload --version
 
       - name: Install .NET Aspire workload
         run: dotnet workload install aspire
