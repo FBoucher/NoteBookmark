@@ -4,15 +4,18 @@
 @inject ILogger<Settings> Logger
 @rendermode InteractiveServer
 
+<FluentDesignTheme @bind-Mode="@Mode"
+				   @bind-OfficeColor="@OfficeColor"
+				   StorageName="theme" />
 
 <h3>Settings</h3>
 
 <div>
 	<FluentStack Orientation="Orientation.Vertical">
-		<FluentSelect   Label="Theme" Width="150px" 
+		<FluentSelect   Label="Theme" Width="150px"
 						Items="@(Enum.GetValues<DesignThemeModes>())"
 						@bind-SelectedOption="@Mode" />
-		<FluentSelect   Label="Color" 
+		<FluentSelect   Label="Color"
 						Items="@(Enum.GetValues<OfficeColor>().Select(i => (OfficeColor?)i))"
 			Height="200px" Width="250px" @bind-SelectedOption="@OfficeColor">
 			<OptionTemplate>
@@ -22,7 +25,7 @@
 					<FluentLabel>@context</FluentLabel>
 				</FluentStack>
 			</OptionTemplate>
-		</FluentSelect> 
+		</FluentSelect>
 	</FluentStack>
 </div>
 
