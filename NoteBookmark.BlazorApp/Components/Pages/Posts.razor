@@ -18,12 +18,15 @@
 else
 {
     <FluentDataGrid Id="postgrid" Items="@posts">
-        <TemplateColumn Width="170px">
+        <TemplateColumn Width="150px">
             <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size24.Open())" />
-            <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
-            @if (!string.IsNullOrEmpty(context!.NoteId))
+            @if (String.IsNullOrEmpty(context!.NoteId))
             {
-                <span><FluentIcon Value="@(new Icons.Filled.Size20.CalligraphyPenCheckmark())" /></span>
+                <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
+            }
+            else
+            {
+                <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
             }
         </TemplateColumn>
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
