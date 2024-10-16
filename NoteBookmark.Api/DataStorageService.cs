@@ -66,7 +66,7 @@ public class DataStorageService(string connectionString):IDataStorageService
                                 Timestamp = post.Timestamp,
                                 ETag = post.ETag,
                                 Id = post.Id,
-                                Date_published = post.Date_published ?? "0000-00-00",
+                                Date_published = post.Date_published ?? post.Timestamp!.Value.ToString("yyyy-MM-dd" )?? "0000-00-00",
                                 is_read = post.is_read ?? false,
                                 Title = post.Title ?? string.Empty, 
                                 Url = post.Url ?? string.Empty, 

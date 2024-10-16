@@ -20,7 +20,7 @@
 
         <FluentStack Orientation="Orientation.Vertical">
             <div>
-                <FluentTextField Name="Comment" Label="Comment" @bind-Value="_note.Comment" Required="true" />
+                <FluentTextArea Name="Comment" Label="Comment" @bind-Value="_note.Comment" Required="true" />
                 <FluentValidationMessage For="@(() => _note.Comment)" />
             </div>
 

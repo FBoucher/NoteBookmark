@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
@@ -32,7 +32,7 @@ jobs:
         uses: Azure/setup-azd@v1.0.0
 
       - name: Install .NET Aspire workload
-        run: dotnet workload install aspire
+        run: dotnet workload update && dotnet workload install aspire
 
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
