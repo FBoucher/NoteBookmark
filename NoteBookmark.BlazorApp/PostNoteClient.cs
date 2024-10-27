@@ -19,7 +19,7 @@ public class PostNoteClient(HttpClient httpClient)
 
     public async Task CreateNote(Note note)
     {
-        var response = await httpClient.PostAsJsonAsync("api/posts/notes", note);
+        var response = await httpClient.PostAsJsonAsync("api/notes/note", note);
         response.EnsureSuccessStatusCode();
     }
 }

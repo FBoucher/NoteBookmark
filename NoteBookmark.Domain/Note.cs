@@ -24,6 +24,16 @@ public class Note : ITableEntity
     [DataMember(Name = "post_id")]
     public string? PostId { get; set; }
 
+    [DataMember(Name = "category")]
+    public string? Category
+    {
+        get => string.IsNullOrWhiteSpace(Category) ? GetCategory() : Category;
+        set { Category = value; }
+    }
+
+    [DataMember(Name = "reading_notes_id")]
+    public string? ReadingNotesID { get; set; }
+
 
 
     public string PartitionKey { get; set; }
@@ -37,5 +47,18 @@ public class Note : ITableEntity
     public bool Validate()
     {
         return !string.IsNullOrWhiteSpace(Comment);
+    }
+
+    private string GetCategory()
+    {
+        string category = "misc";
+        if (!string.IsNullOrEmpty(Tags))
+        {
+            var newListTags = Tags.Split('.');
+
+            category = newListTags[0];
+        }
+
+        return NoteCategories.GetCategories(category);
     }
 }

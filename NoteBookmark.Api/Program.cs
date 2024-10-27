@@ -33,6 +33,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapPostEndpoints();
+app.MapNoteEndpoints();
 app.MapSummaryEndpoints();
 
 
