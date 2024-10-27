@@ -25,10 +25,11 @@ public class Note : ITableEntity
     public string? PostId { get; set; }
 
     [DataMember(Name = "category")]
+    private string? _category { get; set; }
     public string? Category
     {
-        get => string.IsNullOrWhiteSpace(Category) ? GetCategory() : Category;
-        set { Category = value; }
+        get => string.IsNullOrWhiteSpace(_category) ? GetCategory() : _category;
+        set { _category = value; }
     }
 
     [DataMember(Name = "reading_notes_id")]
