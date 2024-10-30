@@ -46,6 +46,12 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
+    private TableClient GetSettingTable()
+    {
+        TableClient table = GetTable("Settings");
+        return table;
+    }
+
     public List<PostL> GetFilteredPosts(string filter)
 	{
 		var tblPosts = GetPostTable();
@@ -106,6 +112,31 @@ public class DataStorageService(string connectionString):IDataStorageService
         {
             tblNote.AddEntity<Note>(note);
         }
+    }
+
+
+    public async Task<Settings> GetSettings(string rowKey)
+    {
+        var tblSettings = GetSettingTable();
+        Settings settings;
+        var result = await tblSettings.GetEntityIfExistsAsync<Settings>("setting", "setting");
+        
+        if (result.HasValue)
+        {
+            settings = result.Value!;
+        }
+        else
+        {
+            settings = new Settings({
+                PartitionKey = "setting",
+                RowKey = "setting",
+                LastBookmarkDate = "2023-04-06T07:31:44",
+                ReadingNotesCounter = "623"
+            });
+
+            await tblSettings.AddEntityAsync<Settings>(settings);
+        }
+        return settings;
     }
 }
 
