@@ -6,28 +6,28 @@ namespace NoteBookmark.Domain;
 
 public class ReadingNotes
 {
-    public ReadingNotes(int number)
+    public ReadingNotes(string number)
     {
-        this.Number = number.ToString();
+        this.Number = number;
         this.Title = $"Reading Notes #{number}";
         this.Notes = new Dictionary<string, List<Note>>();
     }
 
     
-    public ReadingNotes(string jsonFilePath)
-    {
-        var jsonString = File.ReadAllText(jsonFilePath);
-        var readingNotes = JsonSerializer.Deserialize<ReadingNotes>(jsonString);
+    // public ReadingNotes(string jsonFilePath)
+    // {
+    //     var jsonString = File.ReadAllText(jsonFilePath);
+    //     var readingNotes = JsonSerializer.Deserialize<ReadingNotes>(jsonString);
 
-        if (readingNotes != null)
-        {
-            this.Number = readingNotes.Number;
-            this.Title = readingNotes.Title;
-            this.Tags = readingNotes.Tags;
-            this.Intro = readingNotes.Intro;
-            this.Notes = readingNotes.Notes;
-        }
-    }
+    //     if (readingNotes != null)
+    //     {
+    //         this.Number = readingNotes.Number;
+    //         this.Title = readingNotes.Title;
+    //         this.Tags = readingNotes.Tags;
+    //         this.Intro = readingNotes.Intro;
+    //         this.Notes = readingNotes.Notes;
+    //     }
+    // }
 
     public string Number { get; set; }
     public string  Title { get; set; } = string.Empty;

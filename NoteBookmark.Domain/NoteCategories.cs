@@ -11,7 +11,7 @@ public static class NoteCategories
     /// <summary>
     /// Get a dictionary to change the short version by the long version of category name.
     /// </summary>
-    public static string GetCategories(string? category)
+    public static string GetCategory(string? category)
     {
         var categories = new Dictionary<string, string>
                                                     {

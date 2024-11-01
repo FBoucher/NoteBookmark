@@ -60,6 +60,6 @@ public class Note : ITableEntity
             category = newListTags[0];
         }
 
-        return NoteCategories.GetCategories(category);
+        return NoteCategories.GetCategory(category);
     }
 }

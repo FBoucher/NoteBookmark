@@ -6,12 +6,15 @@ namespace NoteBookmark.Api;
 
 public static class NoteEnpoints
 {
-    public static void MapNoteEndpoints(this IEndpointRouteBuilder app)
+	public static void MapNoteEndpoints(this IEndpointRouteBuilder app)
 	{
 		var endpoints = app.MapGroup("api/notes")
 				.WithOpenApi();
 
 		endpoints.MapPost("/note", CreateNote)
+			.WithDescription("Create a new note");
+
+		endpoints.MapGet("/GetUnUsed", GetUnUsedNotes)
 			.WithDescription("Create a new note");
 	}
 
@@ -28,4 +31,11 @@ public static class NoteEnpoints
 			return TypedResults.BadRequest();
 		}
 	}
+
+	static Results<Ok<List<Note>>, NotFound> GetUnUsedNotes(IDataStorageService dataStorageService)
+	{
+		var notes = dataStorageService.GetUnUsedNotes();
+		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
+	}
+
 }

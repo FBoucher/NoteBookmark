@@ -12,5 +12,8 @@ public interface IDataStorageService
 
 	public List<Summary> GetSummaries();
 
+	public List<Note> GetUnUsedNotes();
     public void CreateNote(Note note);
+
+	public Task<Settings> GetSettings();
 }

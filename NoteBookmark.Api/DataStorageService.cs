@@ -52,6 +52,14 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
+    public List<Note> GetUnUsedNotes()
+    {
+        var tblNotes = GetNoteTable();
+        Pageable<Note> queryResult = tblNotes.Query<Note>(filter: "PostId eq null");
+        List<Note> notes = queryResult.ToList<Note>();
+        return notes;
+    }
+
     public List<PostL> GetFilteredPosts(string filter)
 	{
 		var tblPosts = GetPostTable();
@@ -92,6 +100,8 @@ public class DataStorageService(string connectionString):IDataStorageService
         return post;
     }
 
+
+
     public List<Summary> GetSummaries()
     {
         var tblSummary = GetSummaryTable();
@@ -115,7 +125,7 @@ public class DataStorageService(string connectionString):IDataStorageService
     }
 
 
-    public async Task<Settings> GetSettings(string rowKey)
+    public async Task<Settings> GetSettings()
     {
         var tblSettings = GetSettingTable();
         Settings settings;
@@ -127,17 +137,18 @@ public class DataStorageService(string connectionString):IDataStorageService
         }
         else
         {
-            settings = new Settings({
+            settings = new Settings {
                 PartitionKey = "setting",
                 RowKey = "setting",
                 LastBookmarkDate = "2023-04-06T07:31:44",
                 ReadingNotesCounter = "623"
-            });
+            };
 
             await tblSettings.AddEntityAsync<Settings>(settings);
         }
         return settings;
     }
+
 }
 
 
