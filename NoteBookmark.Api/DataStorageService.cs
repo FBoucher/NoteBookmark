@@ -7,7 +7,7 @@ using NoteBookmark.Domain;
 
 namespace NoteBookmark.Api;
 
-public class DataStorageService(string connectionString):IDataStorageService
+public class DataStorageService(string connectionString): IDataStorageService
 {
     private string ConnectionString { get; set; } = connectionString;
     private TableServiceClient? TableClient { get; set; }

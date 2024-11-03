@@ -10,7 +10,7 @@ public class ReadingNotes
     {
         this.Number = number;
         this.Title = $"Reading Notes #{number}";
-        this.Notes = new Dictionary<string, List<Note>>();
+        this.Notes = new Dictionary<string, List<ReadingNote>>();
     }
 
     
@@ -34,5 +34,5 @@ public class ReadingNotes
     //public string  Filename { get; set; } = string.Empty;
     public string Tags { get; set; } = string.Empty;
     public string Intro { get; set; } = string.Empty;
-    public Dictionary<string, List<Note>> Notes { get; set; }
+    public Dictionary<string, List<ReadingNote>> Notes { get; set; }
 }

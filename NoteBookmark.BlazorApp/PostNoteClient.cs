@@ -31,18 +31,23 @@ public class PostNoteClient(HttpClient httpClient)
         var readingNotes = new ReadingNotes(rnCounter);
 
         //Get all unused notes 
-        var unsortedNotes = await httpClient.GetFromJsonAsync<List<Note>>($"api/notes/GetNotesForSummary/{rnCounter}");
+        var unsortedNotes = await httpClient.GetFromJsonAsync<List<ReadingNote>>($"api/notes/GetNotesForSummary/{rnCounter}");
         
+        if(unsortedNotes == null || unsortedNotes.Count == 0){
+            return readingNotes;
+        }
 
-        readingNotes.Notes = GroupNotesByCategory(unsortedNotes ?? new List<Note>());
+        Dictionary<string, List<ReadingNote>> sortedNotes = GroupNotesByCategory(unsortedNotes);
+
+        readingNotes.Notes = sortedNotes;
         
         return readingNotes;
     }
 
 
-    private Dictionary<string, List<Note>> GroupNotesByCategory(List<Note> notes)
+    private Dictionary<string, List<ReadingNote>> GroupNotesByCategory(List<ReadingNote> notes)
     {
-        var sortedNotes = new Dictionary<string, List<Note>>();
+        var sortedNotes = new Dictionary<string, List<ReadingNote>>();
 
         foreach (var note in notes)
         {
@@ -59,7 +64,7 @@ public class PostNoteClient(HttpClient httpClient)
             }
             else
             {
-                sortedNotes.Add(category, new List<Note> {note});
+                sortedNotes.Add(category, new List<ReadingNote> {note});
             }
         }
 

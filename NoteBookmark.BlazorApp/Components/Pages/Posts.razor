@@ -11,6 +11,9 @@
 
 <h1>Posts</h1>
 
+<FluentAnchor title="Generate Summary" Href="summaryeditor" IconStart="@(new Icons.Regular.Size20.ArrowAutofitHeightIn())" ></FluentAnchor>
+
+
 @* @if (posts == null)
 {
     <p><em>Loading...</em></p>
@@ -83,4 +86,5 @@ else
     {
         toastService.ShowSuccess("Note created successfully!");
     }
+
 }
