@@ -15,6 +15,7 @@ public static class NoteCategories
     {
         var categories = new Dictionary<string, string>
                                                     {
+                                                        {"ai", "AI"},
                                                         {"cloud", "Cloud"},
                                                         {"data", "Data"},
                                                         {"database", "Databases"},
@@ -33,5 +34,22 @@ public static class NoteCategories
         {
             return categories["misc"];
         }
+    }
+
+    public static List<string> GetCategories()
+    {
+        return new List<string>
+        {
+            "AI",
+            "Cloud",
+            "Data",
+            "Databases",
+            "DevOps",
+            "Miscellaneous",
+            "Programming",
+            "Open Source",
+            "Suggestion of the week",
+            "del"
+        };
     }
 }

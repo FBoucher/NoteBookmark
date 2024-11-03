@@ -2,6 +2,7 @@ using System;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
+using Microsoft.Extensions.Azure;
 using NoteBookmark.Domain;
 
 namespace NoteBookmark.Api;
@@ -52,13 +53,53 @@ public class DataStorageService(string connectionString):IDataStorageService
         return table;
     }
 
-    public List<Note> GetUnUsedNotes()
+    public List<ReadingNote> GetNotesForSummary(string ReadingNotesId)
     {
         var tblNotes = GetNoteTable();
-        Pageable<Note> queryResult = tblNotes.Query<Note>(filter: "PostId eq null");
-        List<Note> notes = queryResult.ToList<Note>();
+        var tblPosts = GetPostTable();
+
+        var notesQuery = tblNotes.Query<Note>(filter: $"PartitionKey eq '{ReadingNotesId}'");
+        var notes = notesQuery.ToList();
+
+        var postIds = notes.Select(note => note.PostId).Distinct().ToList();
+
+        var filter = string.Join(" or ", postIds.Select(id => $"RowKey eq '{id}'"));
+        var postsQuery = tblPosts.Query<Post>(filter: filter);
+        var posts = postsQuery.ToList();
+
+
+        var result = from note in notes
+                        join post in posts on note.PostId equals post.RowKey
+                        select new ReadingNote
+                        {
+                            Comment = note.Comment,
+                            Tags = note.Tags,
+                            PostId = note.PostId,
+                            PostAutor = post.Author,
+                            PostTitle = post.Title,
+                            PostURL = post.Url,
+                            Category = note.Category,
+                            PartitionKey = note.PartitionKey,
+                            ReadingNotesID = note.PartitionKey,
+                            RowKey = note.RowKey
+                        };
+
+        return result.ToList();
+    }
+
+    //get all notes
+    public List<Note> GetNotes()
+    {
+        var tblNotes = GetNoteTable();
+        var notesQuery = tblNotes.Query<Note>();
+        var notes = notesQuery.ToList();
         return notes;
     }
+
+
+
+
+
 
     public List<PostL> GetFilteredPosts(string filter)
 	{

@@ -19,6 +19,8 @@ public class PostNoteClient(HttpClient httpClient)
 
     public async Task CreateNote(Note note)
     {
+        var rnCounter = await httpClient.GetStringAsync("api/settings/GetNextReadingNotesCounter");
+        note.PartitionKey = rnCounter;
         var response = await httpClient.PostAsJsonAsync("api/notes/note", note);
         response.EnsureSuccessStatusCode();
     }
@@ -29,14 +31,16 @@ public class PostNoteClient(HttpClient httpClient)
         var readingNotes = new ReadingNotes(rnCounter);
 
         //Get all unused notes 
-        var unsortedNotes = await httpClient.GetFromJsonAsync<List<Note>>("api/notes/GetUnUsed");
+        var unsortedNotes = await httpClient.GetFromJsonAsync<List<Note>>($"api/notes/GetNotesForSummary/{rnCounter}");
         
+
+        readingNotes.Notes = GroupNotesByCategory(unsortedNotes ?? new List<Note>());
         
         return readingNotes;
     }
 
 
-    private Dictionary<string, List<Note>> SortNotes(List<Note> notes, string  counter)
+    private Dictionary<string, List<Note>> GroupNotesByCategory(List<Note> notes)
     {
         var sortedNotes = new Dictionary<string, List<Note>>();
 
@@ -44,10 +48,11 @@ public class PostNoteClient(HttpClient httpClient)
         {
             var tags = note.Tags!.Split(',');
             
-            var category = NoteCategories.GetCategory(tags[0]);
-            note.Category = category;
-            note.ReadingNotesID = counter;
+            if(string.IsNullOrEmpty(note.Category)){
+                note.Category = NoteCategories.GetCategory(tags[0]);
+            }
 
+            string category = note.Category;
             if (sortedNotes.ContainsKey(category))
             {
                 sortedNotes[category].Add(note);

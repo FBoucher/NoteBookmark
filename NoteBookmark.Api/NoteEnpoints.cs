@@ -13,9 +13,12 @@ public static class NoteEnpoints
 
 		endpoints.MapPost("/note", CreateNote)
 			.WithDescription("Create a new note");
+		
+		endpoints.MapGet("/", GetNotes)
+			.WithDescription("Get all unused reading notes with with the info about the related post.");
 
-		endpoints.MapGet("/GetUnUsed", GetUnUsedNotes)
-			.WithDescription("Create a new note");
+		endpoints.MapGet("/GetNotesForSummary/{ReadingNotesId}", GetNotesForSummary)
+			.WithDescription("Get all notes with the info about the related post for a specific reading notes summary.");
 	}
 
 	static Results<Created<Note>, BadRequest> CreateNote(Note note, IDataStorageService dataStorageService)
@@ -32,9 +35,15 @@ public static class NoteEnpoints
 		}
 	}
 
-	static Results<Ok<List<Note>>, NotFound> GetUnUsedNotes(IDataStorageService dataStorageService)
+	static Results<Ok<List<Note>>, NotFound> GetNotes(IDataStorageService dataStorageService)
 	{
-		var notes = dataStorageService.GetUnUsedNotes();
+		var notes = dataStorageService.GetNotes();
+		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
+	}
+
+	static Results<Ok<List<ReadingNote>>, NotFound> GetNotesForSummary(string ReadingNotesId, IDataStorageService dataStorageService)
+	{
+		var notes = dataStorageService.GetNotesForSummary(ReadingNotesId);
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
 	}
 
