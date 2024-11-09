@@ -219,6 +219,20 @@ public class DataStorageService(string connectionString): IDataStorageService
         return client.GetBlobClient(name).Uri.ToString();
     }
 
+    public async Task<bool> SaveSummary(Summary summary)
+    {
+        var tblSummary = GetSummaryTable();
+        var existingSummary = tblSummary.Query<Summary>(filter: $"RowKey eq '{summary.RowKey}'").FirstOrDefault();
+        if (existingSummary != null)
+        {
+            await tblSummary.UpdateEntityAsync(summary, ETag.All, TableUpdateMode.Replace);
+        }
+        else
+        {
+            await tblSummary.AddEntityAsync<Summary>(summary);
+        }
+        return true;
+    }
 }
 
 

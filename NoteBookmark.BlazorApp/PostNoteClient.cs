@@ -52,7 +52,7 @@ public class PostNoteClient(HttpClient httpClient)
 
         foreach (var note in notes)
         {
-            var tags = note.Tags!.Split(',');
+            var tags = note.Tags!.ToLower().Split(',');
             
             if(string.IsNullOrEmpty(note.Category)){
                 note.Category = NoteCategories.GetCategory(tags[0]);
@@ -72,10 +72,28 @@ public class PostNoteClient(HttpClient httpClient)
         return sortedNotes;
     }
 
-    public bool SaveReadingNotes(ReadingNotes readingNotes)
+    public async Task<bool> SaveReadingNotes(ReadingNotes readingNotes)
     {
-        var response = httpClient.PostAsJsonAsync("api/notes/SaveReadingNotes", readingNotes);
+        var response = await httpClient.PostAsJsonAsync("api/notes/SaveReadingNotes", readingNotes);
+
+        string jsonURL = ((string)await response.Content.ReadAsStringAsync()).Replace("\"", "");
         
-        return response.Result.IsSuccessStatusCode;
+        if (response.IsSuccessStatusCode && !string.IsNullOrEmpty(jsonURL))
+        {
+            var summary = new Summary
+            {
+                PartitionKey = readingNotes.Number,
+                RowKey = readingNotes.Number,
+                Title = readingNotes.Title,
+                Id = readingNotes.Number,
+                IsGenerated = "true",
+                FileName = jsonURL
+            };
+
+            var summaryResponse = await httpClient.PostAsJsonAsync("api/summary/summary", summary);
+            return summaryResponse.IsSuccessStatusCode;
+        }
+        
+        return false;
     }
 }
