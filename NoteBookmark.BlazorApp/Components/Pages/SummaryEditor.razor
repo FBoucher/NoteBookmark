@@ -4,6 +4,7 @@
 @inject IDialogService DialogService
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
+@inject IToastService toastService
 
 @rendermode InteractiveServer
 
@@ -120,10 +121,14 @@ else{
         }
     }
     
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
         if(readingNotes is not null){
-            client.SaveReadingNotes(readingNotes);
+            var result = await client.SaveReadingNotes(readingNotes);
+            if(result)
+            {
+                ShowConfirmationMessage();
+            }
         }
     }
 
@@ -134,6 +139,11 @@ else{
             readingNotesMD = readingNotes!.ToMarkDown();
         }
         changedto = tab;
+    }
+
+    private void ShowConfirmationMessage()
+    {
+        toastService.ShowSuccess("Summary saved successfully!");
     }
 }
 

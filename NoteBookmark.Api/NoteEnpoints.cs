@@ -50,12 +50,12 @@ public static class NoteEnpoints
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
 	}
 
-	static Results<Created, BadRequest> SaveReadingNotes(ReadingNotes readingNotes, IDataStorageService dataStorageService)
+	private static async Task<Results<Created<string>, BadRequest>> SaveReadingNotes(ReadingNotes readingNotes, IDataStorageService dataStorageService)
 	{
 		try
 		{
-			var url = dataStorageService.SaveReadingNotes(readingNotes).Result;
-			return url == null ? TypedResults.BadRequest() : TypedResults.Created(url);
+			var url = await dataStorageService.SaveReadingNotes(readingNotes);
+			return url == null ? TypedResults.BadRequest() : TypedResults.Created("url", url);
 		}
 		catch (Exception ex)
 		{
