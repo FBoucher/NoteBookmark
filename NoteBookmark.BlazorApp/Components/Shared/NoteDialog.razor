@@ -20,6 +20,16 @@
 
         <FluentStack Orientation="Orientation.Vertical">
             <div>
+                <FluentSelect @bind-Value="_note.Category" TOption="string">
+                    @foreach (var category in _categories)
+                    {
+                        <FluentOption TOption="string" Value="@category">@category</FluentOption>
+                    }
+                </FluentSelect>
+            </div>
+            
+            <FluentValidationMessage For="@(() => _note.Category)" />
+            <div>
                 <FluentTextArea Name="Comment" Label="Comment" @bind-Value="_note.Comment" Required="true" />
                 <FluentValidationMessage For="@(() => _note.Comment)" />
             </div>
@@ -56,6 +66,8 @@
     public FluentDialog Dialog { get; set; } = default!;
 
     private Domain.Note _note = default!;
+
+    private List<string> _categories = NoteCategories.GetCategories();
 
     protected override void OnInitialized()
     {

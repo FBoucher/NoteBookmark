@@ -12,5 +12,12 @@ public interface IDataStorageService
 
 	public List<Summary> GetSummaries();
 
+	List<ReadingNote> GetNotesForSummary(string PartitionKey);
     public void CreateNote(Note note);
+
+	public List<Note> GetNotes();
+
+	public Task<Settings> GetSettings();
+
+	public Task<string> SaveReadingNotes(ReadingNotes readingNotes);
 }

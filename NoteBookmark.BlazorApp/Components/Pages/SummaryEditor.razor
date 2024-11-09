@@ -1,0 +1,139 @@
+﻿@page "/summaryeditor"
+
+@using NoteBookmark.Domain
+@inject IDialogService DialogService
+@inject PostNoteClient client
+@inject IJSRuntime jsRuntime
+
+@rendermode InteractiveServer
+
+<h2>SummaryEditor</h2>
+
+@if (readingNotes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else{
+    <FluentTabs @bind-ActiveTabId="@activeid" OnTabChange="HandleOnTabChange" >
+        
+        <FluentTab Label=" Edit Summary" Icon="@(new Icons.Regular.Size20.FormSparkle())" Id="tabEdit">
+            <EditForm Model="@readingNotes"  OnValidSubmit="@HandleValidSubmit" FormName="new_readingNotes">
+                <FluentStack Orientation="Orientation.Vertical" Width="100%">
+                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+                    <DataAnnotationsValidator />
+                    <div style="width: 100%;">
+                        <FluentTextField Label="Title" @bind-Value="readingNotes!.Title"/>
+                    </div>
+                    <div style="width: 100%;">
+                        <FluentTextField Label="Summary Tags" @bind-Value="@readingNotes!.Tags" style="width: 100%;"/>
+                    </div>
+
+                    <div>
+                        @foreach (var note in readingNotes!.Notes)
+                        {
+                            string category = note.Key;
+                            List<ReadingNote> rnList = note.Value;
+                            <div style="margin-bottom: 30px;">
+                                <h4>@category</h4>
+
+                                @foreach (ReadingNote rn in rnList)
+                                {
+                                    <div style="margin: 20px; padding: 20px; width: 100%; border: groove;  border-radius: 5px; background-color: gray">
+                                        <FluentTextField Label="Post Title" @bind-Value="rn.PostTitle" style="width: 100%;"/>
+
+                                        <FluentTextField Label="Post Autor" @bind-Value="rn.PostAuthor" style="width: 100%;"/>
+
+                                        <FluentStack Orientation="Orientation.Horizontal" Width="100%">
+                                            <FluentTextField Label="Post URL" @bind-Value="rn.PostURL" style="width: 80%;"/>
+                                            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(@rn.PostURL))" IconEnd="@(new Icons.Regular.Size16.Open())"/>
+                                        </FluentStack>
+
+                                        <FluentTextArea Label="Comment" @bind-Value="rn.Comment" Resize="TextAreaResize.Both" Cols="100"/>
+
+                                        <FluentTextField Label="Tags" @bind-Value="rn.Tags" style="width: 100%;"/>
+                                    </div>
+
+                                }
+                                <FluentButton OnClick="@(() => AddExtraNote(category))" Type="ButtonType.Button" Appearance="Appearance.Accent" style="margin: 20px;">Add Note</FluentButton>
+                            </div>
+                        }
+                        <FluentButton OnClick="@(async () => await AddExtraCategory())" Type="ButtonType.Button" Appearance="Appearance.Accent" style="margin: 20px;">Add Category</FluentButton>
+                    </div>
+
+                </FluentStack>
+                <div style="color: var(--error);">
+                    <FluentValidationSummary />
+                </div>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+                
+            </EditForm>
+        </FluentTab>
+
+        <FluentTab Label=" Markdown" Icon="@(new Icons.Regular.Size20.Markdown())" Id="tabMD">
+            <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This Markdown is generated from the form.</FluentLabel>
+            <FluentTextArea Value="@readingNotesMD" ReadOnly="true" Cols="100" Rows="30"/>
+        </FluentTab>
+
+    </FluentTabs>
+    
+}
+
+
+
+@code {
+
+    private ReadingNotes? readingNotes;
+    private string? activeid = "tabEdit";
+    private FluentTab? changedto;
+
+    private string? readingNotesMD = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        readingNotes = await client.CreateReadingNotes();
+    }
+    
+    private async Task OpenUrlInNewWindow(string? url)
+    {
+        await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+    }
+    
+    private void AddExtraNote(string category)
+    {
+        readingNotes!.Notes[category].Add(new ReadingNote());
+    }
+    
+    async Task AddExtraCategory()
+    {
+        var newCategory = string.Empty;
+        var dialogInstance = await DialogService.ShowDialogAsync(@<div>
+                                                                      <FluentTextField @bind-Value=newCategory Label="Enter new Category:" />
+                                                                  </div>
+            , new DialogParameters
+            {
+                Title = "New Category",
+            });
+        var result = await dialogInstance.Result;
+        if (!result.Cancelled)
+        {
+            readingNotes!.Notes.Add(newCategory, new List<ReadingNote> {new ReadingNote()});
+        }
+    }
+    
+    private void HandleValidSubmit()
+    {
+        if(readingNotes is not null){
+            client.SaveReadingNotes(readingNotes);
+        }
+    }
+
+    private void HandleOnTabChange(FluentTab tab)
+    {   
+        if(tab.Id == "tabMD")
+        {
+            readingNotesMD = readingNotes!.ToMarkDown();
+        }
+        changedto = tab;
+    }
+}
+

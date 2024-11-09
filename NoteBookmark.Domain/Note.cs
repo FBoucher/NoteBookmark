@@ -25,6 +25,8 @@ public class Note : ITableEntity
     public string? PostId { get; set; }
 
 
+    [DataMember(Name = "category")]
+    public string? Category { get; set; }
 
     public string PartitionKey { get; set; }
 
