@@ -40,6 +40,7 @@ public class PostNoteClient(HttpClient httpClient)
         Dictionary<string, List<ReadingNote>> sortedNotes = GroupNotesByCategory(unsortedNotes);
 
         readingNotes.Notes = sortedNotes;
+        readingNotes.Tags = readingNotes.GetAllUniqueTags();
         
         return readingNotes;
     }
@@ -69,5 +70,12 @@ public class PostNoteClient(HttpClient httpClient)
         }
 
         return sortedNotes;
+    }
+
+    public bool SaveReadingNotes(ReadingNotes readingNotes)
+    {
+        var response = httpClient.PostAsJsonAsync("api/notes/SaveReadingNotes", readingNotes);
+        
+        return response.Result.IsSuccessStatusCode;
     }
 }

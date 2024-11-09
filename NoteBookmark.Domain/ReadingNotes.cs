@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Text.Json;
 
 
@@ -35,4 +36,53 @@ public class ReadingNotes
     public string Tags { get; set; } = string.Empty;
     public string Intro { get; set; } = string.Empty;
     public Dictionary<string, List<ReadingNote>> Notes { get; set; }
+
+
+    public string GetAllUniqueTags(){
+        var uniqueTags = new HashSet<string>();
+
+        foreach (var category in Notes.Values)
+        {
+            foreach (var note in category)
+            {
+                if (!string.IsNullOrEmpty(note.Tags))
+                {
+                    var tags = note.Tags.Split('.');
+                    uniqueTags = uniqueTags.Concat(tags).ToHashSet();
+                }
+            }
+        }
+        uniqueTags.Add("readingnotes");
+        return String.Join(",", uniqueTags.OrderBy(n => n).ToArray<string>());
+    }
+
+    public string ToMarkDown()
+    {
+
+        var md = new StringBuilder();
+
+        //== YAML header
+        md.AppendFormat("---{0}", Environment.NewLine);
+        md.Append(string.Format("Title: {0}{1}", Title, Environment.NewLine));
+        md.Append(string.Format("Tags: {0}{1}", Tags, Environment.NewLine));
+        md.AppendFormat("---{0}", Environment.NewLine);
+
+        md.Append(Title + Environment.NewLine);
+        md.Append('=', Title.Length);
+
+        //== All Notes
+        foreach (var key in this.Notes.Keys)
+        {
+
+            md.AppendFormat("{0}{0}## {1}{0}{0}", Environment.NewLine, key);
+
+            foreach (var note in ((List<ReadingNote>)Notes[key]))
+            {
+                md.Append(note.ToMarkDown() + Environment.NewLine);
+            }
+
+        }
+
+        return md.ToString();
+    }
 }

@@ -19,6 +19,9 @@ public static class NoteEnpoints
 
 		endpoints.MapGet("/GetNotesForSummary/{ReadingNotesId}", GetNotesForSummary)
 			.WithDescription("Get all notes with the info about the related post for a specific reading notes summary.");
+
+		endpoints.MapPost("/SaveReadingNotes", SaveReadingNotes)
+			.WithDescription("Create a new note");
 	}
 
 	static Results<Created<Note>, BadRequest> CreateNote(Note note, IDataStorageService dataStorageService)
@@ -45,6 +48,20 @@ public static class NoteEnpoints
 	{
 		var notes = dataStorageService.GetNotesForSummary(ReadingNotesId);
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
+	}
+
+	static Results<Created, BadRequest> SaveReadingNotes(ReadingNotes readingNotes, IDataStorageService dataStorageService)
+	{
+		try
+		{
+			var url = dataStorageService.SaveReadingNotes(readingNotes).Result;
+			return url == null ? TypedResults.BadRequest() : TypedResults.Created(url);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred while creating a note: {ex.Message}");
+			return TypedResults.BadRequest();
+		}
 	}
 
 }

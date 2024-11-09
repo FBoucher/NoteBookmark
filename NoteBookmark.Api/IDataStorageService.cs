@@ -18,4 +18,6 @@ public interface IDataStorageService
 	public List<Note> GetNotes();
 
 	public Task<Settings> GetSettings();
+
+	public Task<string> SaveReadingNotes(ReadingNotes readingNotes);
 }

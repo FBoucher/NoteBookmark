@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using System.Text;
 using Azure.Data.Tables;
 
 namespace NoteBookmark.Domain;
@@ -10,7 +11,7 @@ public class ReadingNote
 
     public string? PostId { get; set; }
 
-    public string? PostAutor { get; set; }
+    public string? PostAuthor { get; set; }
 
     public string? PostTitle { get; set; }
     public string? PostURL { get; set; }
@@ -38,5 +39,28 @@ public class ReadingNote
         }
 
         return NoteCategories.GetCategory(category);
+    }
+
+    public string? ToMarkDown()
+    {
+
+        var md = new StringBuilder();
+
+        md.AppendFormat("{0}- ", Environment.NewLine);
+        if (!string.IsNullOrEmpty(PostTitle))
+        {
+            md.AppendFormat("**[{0}]({1})** ", PostTitle, PostURL);
+        }
+        else
+        {
+            md.AppendFormat("**[{0}](#)** ", PostTitle);
+        }
+
+        if (!string.IsNullOrEmpty(PostAuthor))
+            md.AppendFormat(" ({0}) ", PostAuthor);
+
+        md.AppendFormat("- {0}", Comment);
+
+        return md.ToString();
     }
 }

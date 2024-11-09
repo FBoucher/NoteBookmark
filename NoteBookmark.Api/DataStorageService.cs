@@ -1,9 +1,12 @@
 using System;
+using System.Text;
+using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using Microsoft.Extensions.Azure;
 using NoteBookmark.Domain;
+using Azure.Storage.Blobs;
 
 namespace NoteBookmark.Api;
 
@@ -75,7 +78,7 @@ public class DataStorageService(string connectionString): IDataStorageService
                             Comment = note.Comment,
                             Tags = note.Tags,
                             PostId = note.PostId,
-                            PostAutor = post.Author,
+                            PostAuthor = post.Author,
                             PostTitle = post.Title,
                             PostURL = post.Url,
                             Category = note.Category,
@@ -188,6 +191,32 @@ public class DataStorageService(string connectionString): IDataStorageService
             await tblSettings.AddEntityAsync<Settings>(settings);
         }
         return settings;
+    }
+    
+    private async Task<BlobContainerClient> GetReadingNotesContainer()
+    {
+        var blobServiceClient = new BlobServiceClient(ConnectionString);
+        var containerClient = blobServiceClient.GetBlobContainerClient("readingnotes");
+        await containerClient.CreateIfNotExistsAsync();
+        return containerClient;
+    }
+    public async Task<string> SaveReadingNotes(ReadingNotes readingNotes)
+    {
+        var name = $"readingnotes-{readingNotes.Number}.json";
+        var client = await GetReadingNotesContainer();
+        await client.DeleteBlobIfExistsAsync(name);
+
+        string readingNotesJson = JsonSerializer.Serialize(readingNotes);
+        byte[] readingNotesBytes = Encoding.UTF8.GetBytes(readingNotesJson);
+
+        var response =  await client.UploadBlobAsync(name, new MemoryStream(readingNotesBytes)); 
+
+        if (response.GetRawResponse().Status != 201)
+        {
+            return string.Empty;
+        }
+
+        return client.GetBlobClient(name).Uri.ToString();
     }
 
 }
