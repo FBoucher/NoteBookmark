@@ -45,6 +45,14 @@ public class PostNoteClient(HttpClient httpClient)
         return readingNotes;
     }
 
+    public async Task<ReadingNotes?> GetReadingNotes(string number)
+    {
+        ReadingNotes? readingNotes;
+        readingNotes = await httpClient.GetFromJsonAsync<ReadingNotes>($"api/summary/{number}");
+        
+        return readingNotes;
+    }
+
 
     private Dictionary<string, List<ReadingNote>> GroupNotesByCategory(List<ReadingNote> notes)
     {

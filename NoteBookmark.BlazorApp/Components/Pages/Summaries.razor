@@ -1,8 +1,8 @@
 ﻿@page "/summaries"
 @using NoteBookmark.Domain
 @inject PostNoteClient client
-@inject IJSRuntime jsRuntime
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
 
 <PageTitle>Summaries</PageTitle>
 
@@ -14,10 +14,21 @@
 }
 else
 {
-    <FluentDataGrid Id="postgrid" Items="@summaries" >
-        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
-        <PropertyColumn Title="Created" Property="@(c => c!.Timestamp)" Format="yyyy-MM-dd"  Sortable="true" SortBy="@defSort" IsDefaultSortColumn="true"/>
-    </FluentDataGrid>
+    <FluentDataGrid Id="postgrid" Items="@summaries">
+    <ChildContent>
+        <TemplateColumn Width="60px">
+            <FluentButton OnClick="@(() => OpenSummaryEditor(context!.RowKey))"
+                IconEnd="@(new Icons.Regular.Size20.Open())" />
+        </TemplateColumn>
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true" />
+        <PropertyColumn Title="Created" Property="@(c => c!.Timestamp)" Format="yyyy-MM-dd" Sortable="true"
+            SortBy="@defSort" IsDefaultSortColumn="true" />
+    </ChildContent>
+    <EmptyContent>
+        <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry
+        on!
+    </EmptyContent>
+</FluentDataGrid>
 }
 
 @code {
@@ -28,6 +39,11 @@ else
     {
         var urPosts = await client.GetSummaries();
         summaries = urPosts.AsQueryable();
+    }
+
+    private void OpenSummaryEditor(string? number)
+    {
+        Navigation.NavigateTo($"summaryeditor/{number}");
     }
 
 }
