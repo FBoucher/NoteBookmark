@@ -144,6 +144,21 @@ public class DataStorageService(string connectionString): IDataStorageService
         return post;
     }
 
+    public bool SavePost(Post post)
+    {
+        var tblPost = GetPostTable();
+        var existingPost = tblPost.Query<Post>(filter: $"RowKey eq '{post.RowKey}'").FirstOrDefault();
+        if (existingPost != null)
+        {
+            tblPost.UpdateEntity(post, ETag.All, TableUpdateMode.Replace);
+        }
+        else
+        {
+            tblPost.AddEntity<Post>(post);
+        }
+        return true;
+    }
+
 
 
     public List<Summary> GetSummaries()

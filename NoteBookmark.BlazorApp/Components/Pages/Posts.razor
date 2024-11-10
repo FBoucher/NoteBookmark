@@ -5,48 +5,40 @@
 @inject IJSRuntime jsRuntime
 @inject IToastService toastService
 @inject IDialogService DialogService
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 <PageTitle>Posts</PageTitle>
 
 <h1>Posts</h1>
 
-@* Moved to the menu, to I like it there? 
-<FluentAnchor title="Generate Summary" Href="summaryeditor" IconStart="@(new Icons.Regular.Size20.ArrowAutofitHeightIn())" ></FluentAnchor> *@
 
+<FluentDataGrid Id="postgrid" Items="@posts">
+    <ChildContent>       
+        <TemplateColumn Width="150px">
+            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size24.Open())" />
+            <FluentButton OnClick="@(() => EditNote(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Edit())" />
+            @if (String.IsNullOrEmpty(context!.NoteId))
+            {
+                <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
+            }
+            else
+            {
+                <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
+            }
+        </TemplateColumn>
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
+        <PropertyColumn Title="Published" 
+                        Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  
+                        Sortable="true" SortBy="@defSort" 
+                        IsDefaultSortColumn="true" 
+                        Width="130px"/>
+    </ChildContent>
+    <EmptyContent>
+        <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
+    </EmptyContent>
+</FluentDataGrid>
 
-@* @if (posts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{ *@
-    <FluentDataGrid Id="postgrid" Items="@posts">
-        <ChildContent>       
-            <TemplateColumn Width="150px">
-                <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size24.Open())" />
-                @if (String.IsNullOrEmpty(context!.NoteId))
-                {
-                    <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
-                }
-                else
-                {
-                    <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
-                }
-            </TemplateColumn>
-            <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
-            <PropertyColumn Title="Published" 
-                            Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  
-                            Sortable="true" SortBy="@defSort" 
-                            IsDefaultSortColumn="true" 
-                            Width="130px"/>
-        </ChildContent>
-        <EmptyContent>
-            <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
-        </EmptyContent>
-    </FluentDataGrid>
-
-@* } *@
 
 @code {
     private IQueryable<PostL>? posts;
@@ -87,5 +79,12 @@ else
     {
         toastService.ShowSuccess("Note created successfully!");
     }
+
+    private void EditNote(string postId)
+    {
+        Navigation.NavigateTo($"posteditor/{postId}");
+    }
+
+
 
 }

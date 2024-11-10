@@ -104,4 +104,18 @@ public class PostNoteClient(HttpClient httpClient)
         
         return false;
     }
+
+
+    public async Task<Post?> GetPost(string id)
+    {
+        var post = await httpClient.GetFromJsonAsync<Post>($"api/posts/{id}");
+        return post;
+    }
+
+
+    public async Task<bool> SavePost(Post post)
+    {
+        var response = await httpClient.PostAsJsonAsync("api/posts", post);
+        return response.IsSuccessStatusCode;
+    }
 }

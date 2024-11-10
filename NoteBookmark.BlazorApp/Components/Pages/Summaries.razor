@@ -8,13 +8,7 @@
 
 <h1>Summaries</h1>
 
-@if (summaries == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <FluentDataGrid Id="postgrid" Items="@summaries">
+<FluentDataGrid Id="postgrid" Items="@summaries">
     <ChildContent>
         <TemplateColumn Width="60px">
             <FluentButton OnClick="@(() => OpenSummaryEditor(context!.RowKey))"
@@ -29,7 +23,7 @@ else
         on!
     </EmptyContent>
 </FluentDataGrid>
-}
+
 
 @code {
     private IQueryable<Summary>? summaries;
