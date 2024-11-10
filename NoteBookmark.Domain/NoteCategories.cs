@@ -13,6 +13,7 @@ public static class NoteCategories
     /// </summary>
     public static string GetCategory(string? category)
     {
+        category = category?.ToLower();
         var categories = new Dictionary<string, string>
                                                     {
                                                         {"ai", "AI"},
@@ -27,7 +28,7 @@ public static class NoteCategories
                                                         {"oss", "Open Source"},
                                                         {"del", "del"}
                                                     };
-        if (!String.IsNullOrEmpty(category) && categories.ContainsKey(category.ToLower()))
+        if (!String.IsNullOrEmpty(category) && categories.ContainsKey(category))
         {
             return categories[category];
         }
