@@ -11,10 +11,10 @@ public class ReadingNote
 
     public string? PostId { get; set; }
 
-    public string? PostAuthor { get; set; }
+    public string? Author { get; set; }
 
-    public string? PostTitle { get; set; }
-    public string? PostURL { get; set; }
+    public string? Title { get; set; }
+    public string? Url { get; set; }
 
     private string? _category { get; set; }
     public string? Category
@@ -47,17 +47,17 @@ public class ReadingNote
         var md = new StringBuilder();
 
         md.AppendFormat("{0}- ", Environment.NewLine);
-        if (!string.IsNullOrEmpty(PostTitle))
+        if (!string.IsNullOrEmpty(Title))
         {
-            md.AppendFormat("**[{0}]({1})** ", PostTitle, PostURL);
+            md.AppendFormat("**[{0}]({1})** ", Title, Url);
         }
         else
         {
-            md.AppendFormat("**[{0}](#)** ", PostTitle);
+            md.AppendFormat("**[{0}](#)** ", Title);
         }
 
-        if (!string.IsNullOrEmpty(PostAuthor))
-            md.AppendFormat(" ({0}) ", PostAuthor);
+        if (!string.IsNullOrEmpty(Author))
+            md.AppendFormat(" ({0}) ", Author);
 
         md.AppendFormat("- {0}", Comment);
 

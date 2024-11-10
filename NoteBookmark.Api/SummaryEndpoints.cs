@@ -13,6 +13,9 @@ public static class SummaryEndpoints
 		endpoints.MapGet("/", GetSummaries)
 			.WithDescription("Get all unread posts");
 
+		endpoints.MapGet("/{number}", GetReadingNotes)
+			.WithDescription("Get the reading notes for a summary");
+
 		endpoints.MapPost("/summary", SaveSummary)
 			.WithDescription("Create or update the summary");
 	}
@@ -35,5 +38,15 @@ public static class SummaryEndpoints
 		}
 	}
 
+	// Get a ReadingNote by number and return it as a results object
+	static async Task<Results<Ok<ReadingNotes>, NotFound>> GetReadingNotes(string number, IDataStorageService dataStorageService)
+	{
+		var readingNotes = await dataStorageService.GetReadingNotes(number);
+		if (readingNotes == null)
+		{
+			return TypedResults.NotFound();
+		}
+		return TypedResults.Ok(readingNotes);
+	}
 
 }

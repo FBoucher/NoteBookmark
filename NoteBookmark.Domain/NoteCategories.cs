@@ -21,12 +21,13 @@ public static class NoteCategories
                                                         {"database", "Databases"},
                                                         {"dev", "Programming"},
                                                         {"devops", "DevOps"},
+                                                        {"lowcode", "LowCode"},
                                                         {"misc", "Miscellaneous"},
                                                         {"top", "Suggestion of the week"},
                                                         {"oss", "Open Source"},
                                                         {"del", "del"}
                                                     };
-        if (!String.IsNullOrEmpty(category) && categories.ContainsKey(category))
+        if (!String.IsNullOrEmpty(category) && categories.ContainsKey(category.ToLower()))
         {
             return categories[category];
         }
@@ -45,6 +46,7 @@ public static class NoteCategories
             "Data",
             "Databases",
             "DevOps",
+            "LowCode",
             "Miscellaneous",
             "Programming",
             "Open Source",

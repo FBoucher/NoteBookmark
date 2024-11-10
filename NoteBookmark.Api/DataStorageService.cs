@@ -78,9 +78,9 @@ public class DataStorageService(string connectionString): IDataStorageService
                             Comment = note.Comment,
                             Tags = note.Tags,
                             PostId = note.PostId,
-                            PostAuthor = post.Author,
-                            PostTitle = post.Title,
-                            PostURL = post.Url,
+                            Author = post.Author,
+                            Title = post.Title,
+                            Url = post.Url,
                             Category = note.Category,
                             PartitionKey = note.PartitionKey,
                             ReadingNotesID = note.PartitionKey,
@@ -142,6 +142,21 @@ public class DataStorageService(string connectionString): IDataStorageService
         var result = tblPost.Query<Post>(filter: $"RowKey eq '{rowKey}'");
         Post? post = result.FirstOrDefault<Post>();
         return post;
+    }
+
+    public bool SavePost(Post post)
+    {
+        var tblPost = GetPostTable();
+        var existingPost = tblPost.Query<Post>(filter: $"RowKey eq '{post.RowKey}'").FirstOrDefault();
+        if (existingPost != null)
+        {
+            tblPost.UpdateEntity(post, ETag.All, TableUpdateMode.Replace);
+        }
+        else
+        {
+            tblPost.AddEntity<Post>(post);
+        }
+        return true;
     }
 
 
@@ -218,6 +233,19 @@ public class DataStorageService(string connectionString): IDataStorageService
 
         return client.GetBlobClient(name).Uri.ToString();
     }
+
+    public async Task<ReadingNotes> GetReadingNotes(string number)
+    {
+        var client = await GetReadingNotesContainer();
+        var name = $"readingnotes-{number}.json";
+        var blobClient = client.GetBlobClient(name);
+        var response = await blobClient.DownloadAsync();
+        var stream = response.Value.Content;
+        var readingNotes = await JsonSerializer.DeserializeAsync<ReadingNotes>(stream);
+        return readingNotes!;
+    }
+
+
 
     public async Task<bool> SaveSummary(Summary summary)
     {

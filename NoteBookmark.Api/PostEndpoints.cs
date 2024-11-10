@@ -16,6 +16,8 @@ public static class PostEndpoints
 			.WithDescription("Get all unread posts");
 		endpoints.MapGet("/{id}", Get)
 			.WithDescription("Get a post by id");
+		endpoints.MapPost("/", SavePost)
+			.WithDescription("Save or Create a post");
 	}
 	
 	static List<PostL> GetUnreadPosts(IDataStorageService dataStorageService)
@@ -29,7 +31,12 @@ public static class PostEndpoints
 		return post is null ? TypedResults.NotFound() : TypedResults.Ok(post);
 	}
 
-
-
-
+	static Results<Ok, BadRequest> SavePost(Post post, IDataStorageService dataStorageService)
+	{
+		if (dataStorageService.SavePost(post))
+		{
+			return TypedResults.Ok();
+		}
+		return TypedResults.BadRequest();
+	}
 }

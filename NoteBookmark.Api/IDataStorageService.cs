@@ -10,6 +10,8 @@ public interface IDataStorageService
 		
 	public Post? GetPost(string rowKey);
 
+	public bool SavePost(Post post);
+
 	public List<Summary> GetSummaries();
 
 	List<ReadingNote> GetNotesForSummary(string PartitionKey);
@@ -20,6 +22,8 @@ public interface IDataStorageService
 	public Task<Settings> GetSettings();
 
 	public Task<string> SaveReadingNotes(ReadingNotes readingNotes);
+
+	public Task<ReadingNotes> GetReadingNotes(string number);
 
 	public Task<bool> SaveSummary(Summary summary);
 }

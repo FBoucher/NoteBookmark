@@ -45,6 +45,14 @@ public class PostNoteClient(HttpClient httpClient)
         return readingNotes;
     }
 
+    public async Task<ReadingNotes?> GetReadingNotes(string number)
+    {
+        ReadingNotes? readingNotes;
+        readingNotes = await httpClient.GetFromJsonAsync<ReadingNotes>($"api/summary/{number}");
+        
+        return readingNotes;
+    }
+
 
     private Dictionary<string, List<ReadingNote>> GroupNotesByCategory(List<ReadingNote> notes)
     {
@@ -95,5 +103,19 @@ public class PostNoteClient(HttpClient httpClient)
         }
         
         return false;
+    }
+
+
+    public async Task<Post?> GetPost(string id)
+    {
+        var post = await httpClient.GetFromJsonAsync<Post>($"api/posts/{id}");
+        return post;
+    }
+
+
+    public async Task<bool> SavePost(Post post)
+    {
+        var response = await httpClient.PostAsJsonAsync("api/posts", post);
+        return response.IsSuccessStatusCode;
     }
 }
