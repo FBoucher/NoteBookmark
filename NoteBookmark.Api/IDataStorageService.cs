@@ -26,4 +26,6 @@ public interface IDataStorageService
 	public Task<ReadingNotes> GetReadingNotes(string number);
 
 	public Task<bool> SaveSummary(Summary summary);
+
+    public Task<bool> SaveSettings(Settings settings);
 }

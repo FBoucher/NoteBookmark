@@ -261,6 +261,19 @@ public class DataStorageService(string connectionString): IDataStorageService
         }
         return true;
     }
+
+    public async Task<bool> SaveSettings(Settings settings)
+    {
+        var tblSettings = GetSettingTable();
+        var existingSettings = tblSettings.Query<Settings>(filter: $"RowKey eq '{settings.RowKey}'").FirstOrDefault();
+        if (existingSettings != null)
+        {
+            await tblSettings.UpdateEntityAsync(settings, ETag.All, TableUpdateMode.Replace);
+        }
+        else
+        {
+            await tblSettings.AddEntityAsync<Settings>(settings);
+        }
+        return true;
+    }
 }
-
-

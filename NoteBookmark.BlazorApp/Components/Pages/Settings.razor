@@ -2,6 +2,8 @@
 
 @using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @inject ILogger<Settings> Logger
+@inject PostNoteClient client
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 <FluentDesignTheme @bind-Mode="@Mode"
@@ -29,10 +31,32 @@
 	</FluentStack>
 </div>
 
+<EditForm Model="@settings" OnValidSubmit="SaveSettings">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <FluentTextField Label="Last Bookmark Date" @bind-Value="settings.LastBookmarkDate" />
+    <FluentTextField Label="Reading Notes Counter" @bind-Value="settings.ReadingNotesCounter" />
+
+    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+</EditForm>
 
 @code {
     public DesignThemeModes Mode { get; set; }
     public OfficeColor? OfficeColor { get; set; }
+
+    private Settings settings = new Settings();
+
+    protected override async Task OnInitializedAsync()
+    {
+        settings = await client.GetSettings();
+    }
+
+    private async Task SaveSettings()
+    {
+        await client.SaveSettings(settings);
+        Navigation.NavigateTo("/");
+    }
 
 	void OnLoaded(LoadedEventArgs e)
     {
