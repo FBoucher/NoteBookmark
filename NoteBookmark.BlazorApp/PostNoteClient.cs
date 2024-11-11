@@ -118,4 +118,16 @@ public class PostNoteClient(HttpClient httpClient)
         var response = await httpClient.PostAsJsonAsync("api/posts", post);
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<Settings?> GetSettings()
+    {
+        var settings = await httpClient.GetFromJsonAsync<Settings>("api/settings");
+        return settings;
+    }
+
+    public async Task<bool> SaveSettings(Settings settings)
+    {
+        var response = await httpClient.PostAsJsonAsync("api/settings/SaveSettings", settings);
+        return response.IsSuccessStatusCode;
+    }
 }
