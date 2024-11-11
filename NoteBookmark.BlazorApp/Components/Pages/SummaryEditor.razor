@@ -43,7 +43,7 @@ else{
                                 @foreach (ReadingNote rn in rnList)
                                 {
                                     <div style="margin: 20px; padding: 20px; width: 100%; border: groove;  border-radius: 5px; background-color: gray">
-                                        <FluentButton Title="Delete ReadingNote" OnClick="@(() => DeleteReadingNote(category, rn.RowKey))" Type="ButtonType.Button" Appearance="Appearance.Lightweight" IconStart="@(new Icons.Regular.Size16.Delete())" ></FluentButton>
+                                        <FluentButton Title="Delete ReadingNote" OnClick="@(() => DeleteReadingNote(category, rn.RowKey!))" Type="ButtonType.Button" Appearance="Appearance.Lightweight" IconStart="@(new Icons.Regular.Size16.Delete())" ></FluentButton>
                                         <FluentTextField Label="Post Title" @bind-Value="rn.Title" style="width: 100%;"/>
 
                                         <FluentTextField Label="Post Autor" @bind-Value="rn.Author" style="width: 100%;"/>
@@ -168,7 +168,7 @@ else{
             Modal = true,
             PreventScroll = true 
         };
-        var msg = $"Are you sure you want to delete this category and all ({readingNotes.Notes[category].Count}) notes in it notes in it?";
+        var msg = $"Are you sure you want to delete this category and all ({readingNotes!.Notes[category].Count}) notes in it notes in it?";
         IDialogReference dialog = await DialogService.ShowDialogAsync(@<div>@msg</div>, parameters);
         DialogResult? result = await dialog.Result;
 

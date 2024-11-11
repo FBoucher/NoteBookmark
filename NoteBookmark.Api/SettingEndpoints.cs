@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
 
 namespace NoteBookmark.Api;
@@ -12,6 +13,9 @@ public static class SettingEndpoints
 
 		endpoints.MapGet("/GetNextReadingNotesCounter", GetNextReadingNotesCounter)
 			.WithDescription("Get the next reading notes counter (aka number)");
+
+        endpoints.MapGet("/", GetSettings)
+            .WithDescription("Save updated settings");
 
         endpoints.MapPost("/SaveSettings", SaveSettings)
             .WithDescription("Save updated settings");
@@ -36,5 +40,11 @@ public static class SettingEndpoints
             Console.WriteLine($"An error occurred while saving settings: {ex.Message}");
             return TypedResults.BadRequest();
         }
+    }
+
+    static async Task<Results<Ok<Settings>, BadRequest>> GetSettings(IDataStorageService dataStorageService)
+    {
+        var settings = await dataStorageService.GetSettings();
+        return settings != null ? TypedResults.Ok(settings) : TypedResults.BadRequest();
     }
 }
