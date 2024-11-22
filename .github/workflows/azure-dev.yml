@@ -15,6 +15,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  DEFAULT_DOTNET_VERSION: "8.0.x"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,6 +30,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            ${{ env.DEFAULT_DOTNET_VERSION }}
+            9.0.x
 
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
