@@ -28,4 +28,6 @@ public interface IDataStorageService
 	public Task<bool> SaveSummary(Summary summary);
 
     public Task<bool> SaveSettings(Settings settings);
+
+	public Task UpdatePostReadStatus();
 }

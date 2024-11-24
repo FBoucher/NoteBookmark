@@ -22,6 +22,9 @@ public static class NoteEnpoints
 
 		endpoints.MapPost("/SaveReadingNotes", SaveReadingNotes)
 			.WithDescription("Create a new note");
+
+		endpoints.MapGet("/UpdatePostReadStatus", UpdatePostReadStatus)
+			.WithDescription("Update the read status of all posts to true if they have a note referencing them.");
 	}
 
 	static Results<Created<Note>, BadRequest> CreateNote(Note note, IDataStorageService dataStorageService)
@@ -29,6 +32,12 @@ public static class NoteEnpoints
 		try
 		{
 			dataStorageService.CreateNote(note);
+			var post = dataStorageService.GetPost(note.PostId!);
+			if(post is not null)
+			{
+				post.is_read = true;
+				dataStorageService.SavePost(post);
+			}
 			return TypedResults.Created($"/api/notes/{note.RowKey}", note);
 		}
 		catch (Exception ex)
@@ -64,4 +73,17 @@ public static class NoteEnpoints
 		}
 	}
 
+	private static async Task<Results<Ok, BadRequest>> UpdatePostReadStatus(IDataStorageService dataStorageService)
+	{
+		try
+		{
+			await dataStorageService.UpdatePostReadStatus();
+			return TypedResults.Ok();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred while updating post read status: {ex.Message}");
+			return TypedResults.BadRequest();
+		}
+	}
 }

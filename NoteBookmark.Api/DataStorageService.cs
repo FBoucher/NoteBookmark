@@ -276,4 +276,20 @@ public class DataStorageService(string connectionString): IDataStorageService
         }
         return true;
     }
+
+    public async Task UpdatePostReadStatus()
+    {
+        var tblNotes = GetNoteTable();
+        var tblPosts = GetPostTable();
+
+        foreach (var note in tblNotes.Query<Note>())
+        {
+            var post = tblPosts.Query<Post>(filter: $"RowKey eq '{note.PostId}'").FirstOrDefault();
+            if (post != null)
+            {
+                post.is_read = true;
+                await tblPosts.UpdateEntityAsync(post, ETag.All, TableUpdateMode.Replace);
+            }
+        }
+    }
 }
