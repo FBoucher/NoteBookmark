@@ -1,5 +1,6 @@
 ﻿@page "/summaryeditor/{number?}"
 
+@using Markdig
 @using NoteBookmark.Domain
 @inject IDialogService DialogService
 @inject PostNoteClient client
@@ -79,6 +80,11 @@ else{
             <FluentTextArea Value="@readingNotesMD" ReadOnly="true" Cols="100" Rows="30"/>
         </FluentTab>
 
+        <FluentTab Label=" Html" Icon="@(new Icons.Regular.Size20.Code())" Id="tabHTML">
+            <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This HTML is generated from the Markdown.</FluentLabel>
+            <FluentTextArea Value="@readingNotesHTML" ReadOnly="true" Cols="100" Rows="30"/>
+        </FluentTab>
+
     </FluentTabs>
     
 }
@@ -94,6 +100,7 @@ else{
     private FluentTab? changedto;
 
     private string? readingNotesMD = string.Empty;
+    private string? readingNotesHTML = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,6 +157,10 @@ else{
         if(tab.Id == "tabMD")
         {
             readingNotesMD = readingNotes!.ToMarkDown();
+        }
+        if(tab.Id == "tabHTML")
+        {
+            readingNotesHTML = Markdown.ToHtml(readingNotesMD);
         }
         changedto = tab;
     }
