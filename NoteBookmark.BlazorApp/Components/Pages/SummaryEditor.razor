@@ -23,11 +23,14 @@ else{
                 <FluentStack Orientation="Orientation.Vertical" Width="100%">
                     <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
                     <DataAnnotationsValidator />
-                    <div style="width: 100%;">
+                    <div style="width: 80%;">
                         <FluentTextField Label="Title" @bind-Value="readingNotes!.Title"/>
                     </div>
-                    <div style="width: 100%;">
+                    <div style="width: 80%;">
                         <FluentTextField Label="Summary Tags" @bind-Value="@readingNotes!.Tags" style="width: 100%;"/>
+                    </div>
+                    <div style="width: 80%;">
+                        <FluentTextField Label="Published Url" @bind-Value="@readingNotes!.PublishedUrl" style="width: 80%;"/>
                     </div>
 
                     <div>
@@ -70,9 +73,10 @@ else{
                 <div style="color: var(--error);">
                     <FluentValidationSummary />
                 </div>
+                <FluentButton OnClick="@(async () => await Publish())" Type="ButtonType.Button" Appearance="Appearance.Lightweight">Publish</FluentButton> | 
                 <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
-                
             </EditForm>
+
         </FluentTab>
 
         <FluentTab Label=" Markdown" Icon="@(new Icons.Regular.Size20.Markdown())" Id="tabMD">
@@ -192,6 +196,26 @@ else{
     private void DeleteReadingNote(string category, string RowKey)
     {
         readingNotes!.Notes[category].RemoveAll(x => x.RowKey == RowKey);
+    }
+
+    private async Task Publish()
+    {
+        if(readingNotes is not null)
+        {
+            await HandleValidSubmit();
+            var settings = await client.GetSettings();
+            if(settings is not null)
+            {
+                var cnt = Convert.ToInt32(settings!.ReadingNotesCounter);
+                // Only increment if the current Summary is the most recent one.
+                if(cnt == Convert.ToInt32(readingNotes!.Number))
+                {
+                    cnt++;
+                    settings.ReadingNotesCounter = (cnt).ToString();
+                    await client.SaveSettings(settings);
+                }
+            }
+        }
     }
 }
 

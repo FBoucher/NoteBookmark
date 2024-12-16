@@ -95,6 +95,7 @@ public class PostNoteClient(HttpClient httpClient)
                 Title = readingNotes.Title,
                 Id = readingNotes.Number,
                 IsGenerated = "true",
+                PublishedURL = readingNotes.PublishedUrl,
                 FileName = jsonURL
             };
 

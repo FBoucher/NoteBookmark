@@ -3,6 +3,7 @@
 @inject PostNoteClient client
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Summaries</PageTitle>
 
@@ -10,9 +11,14 @@
 
 <FluentDataGrid Id="postgrid" Items="@summaries">
     <ChildContent>
-        <TemplateColumn Width="60px">
+        <TemplateColumn Width="100px">
+            @if(!String.IsNullOrEmpty(context!.PublishedURL))
+            {
+                <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.PublishedURL))"
+                    IconEnd="@(new Icons.Regular.Size20.Open())" />
+            }
             <FluentButton OnClick="@(() => OpenSummaryEditor(context!.RowKey))"
-                IconEnd="@(new Icons.Regular.Size20.Open())" />
+                IconEnd="@(new Icons.Regular.Size20.Edit())" />
         </TemplateColumn>
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true" />
         <PropertyColumn Title="Created" Property="@(c => c!.Timestamp)" Format="yyyy-MM-dd" Sortable="true"
@@ -40,4 +46,8 @@
         Navigation.NavigateTo($"summaryeditor/{number}");
     }
 
+    private async Task OpenUrlInNewWindow(string? url)
+    {
+        await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+    }
 }
