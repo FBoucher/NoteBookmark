@@ -31,8 +31,9 @@ public class ReadingNotes
     // }
 
     public string Number { get; set; }
-    public string  Title { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     //public string  Filename { get; set; } = string.Empty;
+    public string PublishedUrl { get; set; } = string.Empty;
     public string Tags { get; set; } = string.Empty;
     public string Intro { get; set; } = string.Empty;
     public Dictionary<string, List<ReadingNote>> Notes { get; set; }

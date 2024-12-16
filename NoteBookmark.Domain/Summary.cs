@@ -21,4 +21,7 @@ public class Summary : ITableEntity
 
     [DataMember(Name = "isgenerated")]
 	public string? IsGenerated { get; set; }
+
+    [DataMember(Name = "publishedurl")]
+	public string? PublishedURL { get; set; }
 }
