@@ -13,8 +13,8 @@
 <h1>Posts</h1>
 
 <FluentStack Orientation="Orientation.Horizontal">
-    <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" />
-    <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size24.Add())">+</FluentButton>
+    <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size24.Add())" Title="Add new post"></FluentButton>
+    <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" style="width: 100%;"/>
 </FluentStack>
 
 <FluentDataGrid Id="postgrid" Items="@posts">
@@ -99,9 +99,17 @@
     {
         if (!string.IsNullOrEmpty(newPostUrl))
         {
-            await client.ExtractPostDetailsAndSave(newPostUrl);
-            await LoadPosts();
-            newPostUrl = string.Empty;
+            var result = await client.ExtractPostDetailsAndSave(newPostUrl);
+            if (result)
+            {
+                await LoadPosts();
+                newPostUrl = string.Empty;
+                toastService.ShowSuccess("Post added successfully!");
+            }
+            else
+            {
+                toastService.ShowError("Failed to add post. Please try again.");
+            }
         }
     }
 }

@@ -132,9 +132,10 @@ public class PostNoteClient(HttpClient httpClient)
         return response.IsSuccessStatusCode;
     }
 
-    public async Task ExtractPostDetailsAndSave(string url)
+    public async Task<bool> ExtractPostDetailsAndSave(string url)
     {
-        var response = await httpClient.PostAsJsonAsync("api/posts/extractPostDetails", url);
-        response.EnsureSuccessStatusCode();
+        var encodedUrl = System.Net.WebUtility.UrlEncode(url);
+        var response = await httpClient.PostAsJsonAsync($"api/posts/extractPostDetails?url={encodedUrl}", url);
+        return response.IsSuccessStatusCode;
     }
 }

@@ -31,5 +31,4 @@ public interface IDataStorageService
 
 	public Task UpdatePostReadStatus();
 
-    public Task<Post?> ExtractPostDetailsFromUrl(string url);
 }
