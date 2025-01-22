@@ -12,6 +12,10 @@
 
 <h1>Posts</h1>
 
+<FluentStack Orientation="Orientation.Horizontal">
+    <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size24.Add())" Title="Add new post"></FluentButton>
+    <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" style="width: 100%;"/>
+</FluentStack>
 
 <FluentDataGrid Id="postgrid" Items="@posts">
     <ChildContent>       
@@ -43,8 +47,14 @@
 @code {
     private IQueryable<PostL>? posts;
     private GridSort<PostL> defSort = GridSort<PostL>.ByDescending(c => c.Date_published);
+    private string newPostUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
     {
         List<PostL> urPosts = await client.GetUnreadPosts();
         posts = urPosts.AsQueryable();
@@ -85,6 +95,21 @@
         Navigation.NavigateTo($"posteditor/{postId}");
     }
 
-
-
+    private async Task AddNewPost()
+    {
+        if (!string.IsNullOrEmpty(newPostUrl))
+        {
+            var result = await client.ExtractPostDetailsAndSave(newPostUrl);
+            if (result)
+            {
+                await LoadPosts();
+                newPostUrl = string.Empty;
+                toastService.ShowSuccess("Post added successfully!");
+            }
+            else
+            {
+                toastService.ShowError("Failed to add post. Please try again.");
+            }
+        }
+    }
 }

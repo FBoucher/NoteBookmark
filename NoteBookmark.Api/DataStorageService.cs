@@ -8,6 +8,7 @@ using Microsoft.Extensions.Azure;
 using NoteBookmark.Domain;
 using Azure.Storage.Blobs;
 
+
 namespace NoteBookmark.Api;
 
 public class DataStorageService(string connectionString): IDataStorageService
@@ -292,4 +293,5 @@ public class DataStorageService(string connectionString): IDataStorageService
             }
         }
     }
+
 }

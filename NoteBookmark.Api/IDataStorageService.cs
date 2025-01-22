@@ -30,4 +30,5 @@ public interface IDataStorageService
     public Task<bool> SaveSettings(Settings settings);
 
 	public Task UpdatePostReadStatus();
+
 }
