@@ -160,7 +160,17 @@ public class DataStorageService(string connectionString): IDataStorageService
         return true;
     }
 
-
+    public bool DeletePost(string rowKey)
+    {
+        var tblPost = GetPostTable();
+        var existingPost = tblPost.Query<Post>(filter: $"RowKey eq '{rowKey}'").FirstOrDefault();
+        if (existingPost != null)
+        {
+            tblPost.DeleteEntity(existingPost.PartitionKey, existingPost.RowKey);
+            return true;
+        }
+        return false;
+    }
 
     public List<Summary> GetSummaries()
     {
