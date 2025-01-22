@@ -30,6 +30,7 @@
             {
                 <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
             }
+            <FluentButton OnClick="@(async () => await DeletePost(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Delete())" />
         </TemplateColumn>
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
         <PropertyColumn Title="Published" 
@@ -110,6 +111,20 @@
             {
                 toastService.ShowError("Failed to add post. Please try again.");
             }
+        }
+    }
+
+    private async Task DeletePost(string postId)
+    {
+        var result = await client.DeletePost(postId);
+        if (result)
+        {
+            await LoadPosts();
+            toastService.ShowSuccess("Post deleted successfully!");
+        }
+        else
+        {
+            toastService.ShowError("Failed to delete post. Please try again.");
         }
     }
 }

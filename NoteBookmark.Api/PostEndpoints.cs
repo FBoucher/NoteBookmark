@@ -21,6 +21,8 @@ public static class PostEndpoints
 			.WithDescription("Save or Create a post");
 		endpoints.MapPost("/extractPostDetails", ExtractPostDetails)
 			.WithDescription("Extract post details from URL and save the post");
+		endpoints.MapDelete("/{id}", DeletePost)
+			.WithDescription("Delete a post by id");
 	}
 	
 	static List<PostL> GetUnreadPosts(IDataStorageService dataStorageService)
@@ -62,6 +64,14 @@ public static class PostEndpoints
 		}
 	}
 
+	static Results<Ok, NotFound> DeletePost(string id, IDataStorageService dataStorageService)
+	{
+		if (dataStorageService.DeletePost(id))
+		{
+			return TypedResults.Ok();
+		}
+		return TypedResults.NotFound();
+	}
 
 	private static async Task<Post?> ExtractPostDetailsFromUrl(string url)
     {

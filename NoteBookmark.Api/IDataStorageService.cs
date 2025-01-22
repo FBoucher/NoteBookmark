@@ -31,4 +31,5 @@ public interface IDataStorageService
 
 	public Task UpdatePostReadStatus();
 
+    public bool DeletePost(string rowKey);
 }
