@@ -7,6 +7,7 @@ using Azure.Data.Tables.Models;
 using Microsoft.Extensions.Azure;
 using NoteBookmark.Domain;
 using Azure.Storage.Blobs;
+using HtmlAgilityPack;
 
 namespace NoteBookmark.Api;
 
@@ -291,5 +292,25 @@ public class DataStorageService(string connectionString): IDataStorageService
                 await tblPosts.UpdateEntityAsync(post, ETag.All, TableUpdateMode.Replace);
             }
         }
+    }
+
+    public async Task<Post?> ExtractPostDetailsFromUrl(string url)
+    {
+        var web = new HtmlWeb();
+        var doc = await web.LoadFromWebAsync(url);
+
+        var titleNode = doc.DocumentNode.SelectSingleNode("//head/title");
+        var authorNode = doc.DocumentNode.SelectSingleNode("//meta[@name='author']");
+
+        var post = new Post
+        {
+            Url = url,
+            Title = titleNode?.InnerText,
+            Author = authorNode?.GetAttributeValue("content", string.Empty),
+            PartitionKey = "post",
+            RowKey = Guid.NewGuid().ToString()
+        };
+
+        return post;
     }
 }

@@ -131,4 +131,10 @@ public class PostNoteClient(HttpClient httpClient)
         var response = await httpClient.PostAsJsonAsync("api/settings/SaveSettings", settings);
         return response.IsSuccessStatusCode;
     }
+
+    public async Task ExtractPostDetailsAndSave(string url)
+    {
+        var response = await httpClient.PostAsJsonAsync("api/posts/extractPostDetails", url);
+        response.EnsureSuccessStatusCode();
+    }
 }

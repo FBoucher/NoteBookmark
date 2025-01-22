@@ -30,4 +30,6 @@ public interface IDataStorageService
     public Task<bool> SaveSettings(Settings settings);
 
 	public Task UpdatePostReadStatus();
+
+    public Task<Post?> ExtractPostDetailsFromUrl(string url);
 }

@@ -18,6 +18,8 @@ public static class PostEndpoints
 			.WithDescription("Get a post by id");
 		endpoints.MapPost("/", SavePost)
 			.WithDescription("Save or Create a post");
+		endpoints.MapPost("/extractPostDetails", ExtractPostDetails)
+			.WithDescription("Extract post details from URL and save the post");
 	}
 	
 	static List<PostL> GetUnreadPosts(IDataStorageService dataStorageService)
@@ -38,5 +40,24 @@ public static class PostEndpoints
 			return TypedResults.Ok();
 		}
 		return TypedResults.BadRequest();
+	}
+
+	static async Task<Results<Ok<Post>, BadRequest>> ExtractPostDetails(string url, IDataStorageService dataStorageService)
+	{
+		try
+		{
+			var post = await dataStorageService.ExtractPostDetailsFromUrl(url);
+			if (post != null)
+			{
+				dataStorageService.SavePost(post);
+				return TypedResults.Ok(post);
+			}
+			return TypedResults.BadRequest();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred while extracting post details: {ex.Message}");
+			return TypedResults.BadRequest();
+		}
 	}
 }

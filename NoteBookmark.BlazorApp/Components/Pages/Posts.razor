@@ -12,6 +12,10 @@
 
 <h1>Posts</h1>
 
+<FluentStack Orientation="Orientation.Horizontal">
+    <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" />
+    <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size24.Add())">+</FluentButton>
+</FluentStack>
 
 <FluentDataGrid Id="postgrid" Items="@posts">
     <ChildContent>       
@@ -43,8 +47,14 @@
 @code {
     private IQueryable<PostL>? posts;
     private GridSort<PostL> defSort = GridSort<PostL>.ByDescending(c => c.Date_published);
+    private string newPostUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
     {
         List<PostL> urPosts = await client.GetUnreadPosts();
         posts = urPosts.AsQueryable();
@@ -85,6 +95,13 @@
         Navigation.NavigateTo($"posteditor/{postId}");
     }
 
-
-
+    private async Task AddNewPost()
+    {
+        if (!string.IsNullOrEmpty(newPostUrl))
+        {
+            await client.ExtractPostDetailsAndSave(newPostUrl);
+            await LoadPosts();
+            newPostUrl = string.Empty;
+        }
+    }
 }
