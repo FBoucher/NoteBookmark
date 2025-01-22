@@ -30,14 +30,16 @@
             {
                 <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
             }
-            <FluentButton OnClick="@(async () => await DeletePost(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Delete())" />
         </TemplateColumn>
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
         <PropertyColumn Title="Published" 
                         Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  
                         Sortable="true" SortBy="@defSort" 
                         IsDefaultSortColumn="true" 
-                        Width="130px"/>
+                        Width="125px"/>
+        <TemplateColumn Width="60px">   
+            <FluentButton OnClick="@(async () => await DeletePost(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Delete())" />
+        </TemplateColumn>
     </ChildContent>
     <EmptyContent>
         <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
