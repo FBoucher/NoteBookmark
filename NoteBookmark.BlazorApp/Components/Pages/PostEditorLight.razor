@@ -25,17 +25,17 @@ else
                 <ValidationSummary />
             </div>
             <div>
-                <FluentTextField Placeholder="Title" @bind-Value="post.Title" />
+                <FluentTextField Placeholder="Title" @bind-Value="post.Title" @oninput="() => isModified = true" />
             </div>
             <div>
-                <FluentTextField Placeholder="URL" @bind-Value="post.Url" />
+                <FluentTextField Placeholder="URL" @bind-Value="post.Url" @oninput="() => isModified = true" />
             </div>
             <div>
-                <FluentTextField Placeholder="Author" @bind-Value="post.Author" />
+                <FluentTextField Placeholder="Author" @bind-Value="post.Author" @oninput="() => isModified = true" />
             </div>
             <div>
-                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
-                <FluentButton Type="ButtonType.Button" OnClick="@CloseWindow">Close</FluentButton>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Disabled="!isModified">Save</FluentButton>
+                <FluentButton Type="ButtonType.Button" OnClick="@SaveAndClose">Save and Close</FluentButton>
             </div>
             
         </FluentStack>
@@ -48,6 +48,7 @@ else
     public string? id { get; set; }
 
     private Post? post;
+    private bool isModified = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,8 +63,14 @@ else
         if (post != null)
         {
             await client.SavePost(post);
-
+            isModified = false;
         }
+    }
+
+    private async Task SaveAndClose()
+    {
+        await SavePost();
+        CloseWindow();
     }
 
     private void CloseWindow(){
