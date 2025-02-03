@@ -39,7 +39,7 @@ jobs:
             9.0.x
 
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2
 
       - name: Install .NET Aspire workload
         run: dotnet workload update && dotnet workload install aspire
