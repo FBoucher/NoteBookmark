@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
 using static NoteBookmark.Api.DataStorageService;
 using HtmlAgilityPack;
+using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 
 namespace NoteBookmark.Api;
 
@@ -24,20 +26,24 @@ public static class PostEndpoints
 		endpoints.MapDelete("/{id}", DeletePost)
 			.WithDescription("Delete a post by id");
 	}
-	
-	static List<PostL> GetUnreadPosts(IDataStorageService dataStorageService)
+
+	static List<PostL> GetUnreadPosts(TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		return dataStorageService.GetFilteredPosts("is_read eq false");
 	}
 
-	static Results<Ok<Post>, NotFound> Get(string id, IDataStorageService dataStorageService)
+	static Results<Ok<Post>, NotFound> Get(string id, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{  
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		var post = dataStorageService.GetPost(id);
 		return post is null ? TypedResults.NotFound() : TypedResults.Ok(post);
 	}
 
-	static Results<Ok, BadRequest> SavePost(Post post, IDataStorageService dataStorageService)
+	static Results<Ok, BadRequest> SavePost(Post post, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
+			
 		if (dataStorageService.SavePost(post))
 		{
 			return TypedResults.Ok();
@@ -45,8 +51,10 @@ public static class PostEndpoints
 		return TypedResults.BadRequest();
 	}
 
-	static async Task<Results<Ok<Post>, BadRequest>> ExtractPostDetails(string url, IDataStorageService dataStorageService)
+	static async Task<Results<Ok<Post>, BadRequest>> ExtractPostDetails(string url, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
+			
 		try
 		{
 			var post = await ExtractPostDetailsFromUrl(url);
@@ -64,8 +72,9 @@ public static class PostEndpoints
 		}
 	}
 
-	static Results<Ok, NotFound> DeletePost(string id, IDataStorageService dataStorageService)
+	static Results<Ok, NotFound> DeletePost(string id, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		if (dataStorageService.DeletePost(id))
 		{
 			return TypedResults.Ok();
