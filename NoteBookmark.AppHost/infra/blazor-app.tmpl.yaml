@@ -43,7 +43,7 @@ properties:
             value: https://api.internal.{{ .Env.AZURE_CONTAINER_APPS_ENVIRONMENT_DEFAULT_DOMAIN }}
         resources:
           cpu: 0.5
-          memory: 0.5Gi
+          memory: 1.0Gi
     scale:
       minReplicas: 0
 tags:
