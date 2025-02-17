@@ -1,4 +1,6 @@
 using System;
+using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
 
@@ -27,10 +29,13 @@ public static class NoteEnpoints
 			.WithDescription("Update the read status of all posts to true if they have a note referencing them.");
 	}
 
-	static Results<Created<Note>, BadRequest> CreateNote(Note note, IDataStorageService dataStorageService)
+	static Results<Created<Note>, BadRequest> CreateNote(Note note, 
+														TableServiceClient tblClient, 
+														BlobServiceClient blobClient)
 	{
 		try
 		{
+			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			dataStorageService.CreateNote(note);
 			var post = dataStorageService.GetPost(note.PostId!);
 			if(post is not null)
@@ -47,22 +52,31 @@ public static class NoteEnpoints
 		}
 	}
 
-	static Results<Ok<List<Note>>, NotFound> GetNotes(IDataStorageService dataStorageService)
+	static Results<Ok<List<Note>>, NotFound> GetNotes(TableServiceClient tblClient, 
+														BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		var notes = dataStorageService.GetNotes();
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
 	}
 
-	static Results<Ok<List<ReadingNote>>, NotFound> GetNotesForSummary(string ReadingNotesId, IDataStorageService dataStorageService)
+	static Results<Ok<List<ReadingNote>>, NotFound> GetNotesForSummary(string ReadingNotesId, 
+														TableServiceClient tblClient, 
+														BlobServiceClient blobClient)
 	{
+		
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		var notes = dataStorageService.GetNotesForSummary(ReadingNotesId);
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
 	}
 
-	private static async Task<Results<Created<string>, BadRequest>> SaveReadingNotes(ReadingNotes readingNotes, IDataStorageService dataStorageService)
+	private static async Task<Results<Created<string>, BadRequest>> SaveReadingNotes(ReadingNotes readingNotes, 
+														TableServiceClient tblClient, 
+														BlobServiceClient blobClient)
 	{
 		try
 		{
+			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			var url = await dataStorageService.SaveReadingNotes(readingNotes);
 			return url == null ? TypedResults.BadRequest() : TypedResults.Created("url", url);
 		}
@@ -73,10 +87,12 @@ public static class NoteEnpoints
 		}
 	}
 
-	private static async Task<Results<Ok, BadRequest>> UpdatePostReadStatus(IDataStorageService dataStorageService)
+	private static async Task<Results<Ok, BadRequest>> UpdatePostReadStatus(TableServiceClient tblClient, 
+																			BlobServiceClient blobClient)
 	{
 		try
 		{
+			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			await dataStorageService.UpdatePostReadStatus();
 			return TypedResults.Ok();
 		}
