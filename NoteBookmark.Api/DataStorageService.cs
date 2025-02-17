@@ -11,49 +11,34 @@ using Azure.Storage.Blobs;
 
 namespace NoteBookmark.Api;
 
-public class DataStorageService(string connectionString): IDataStorageService
+public class DataStorageService(TableServiceClient tblClient, BlobServiceClient blobClient): IDataStorageService
 {
-    private string ConnectionString { get; set; } = connectionString;
-    private TableServiceClient? TableClient { get; set; }
-
-    private TableServiceClient GetTableClient()
-	{
-		if (TableClient == null)
-		{
-			TableClient = new TableServiceClient(ConnectionString);
-		}
-		return TableClient;
-	}
-
-	private TableClient GetTable(string tableName)
-	{
-		var client = GetTableClient();
-		TableItem table = client.CreateTableIfNotExists(tableName);
-
-        return client.GetTableClient(tableName);
-	}
 
 	private TableClient GetPostTable()
     {
-        TableClient table = GetTable("Posts");
+        tblClient.CreateTableIfNotExists("Posts");
+        TableClient table = tblClient.GetTableClient("Posts");
         return table;
     }
 
 	private TableClient GetSummaryTable()
     {
-        TableClient table = GetTable("Summary");
+        tblClient.CreateTableIfNotExists("Summary");
+        TableClient table = tblClient.GetTableClient("Summary");
         return table;
     }
 
     private TableClient GetNoteTable()
     {
-        TableClient table = GetTable("Notes");
+        tblClient.CreateTableIfNotExists("Notes");
+        TableClient table = tblClient.GetTableClient("Notes");
         return table;
     }
 
     private TableClient GetSettingTable()
     {
-        TableClient table = GetTable("Settings");
+        tblClient.CreateTableIfNotExists("Settings");
+        TableClient table = tblClient.GetTableClient("Settings");
         return table;
     }
 
@@ -221,8 +206,7 @@ public class DataStorageService(string connectionString): IDataStorageService
     
     private async Task<BlobContainerClient> GetReadingNotesContainer()
     {
-        var blobServiceClient = new BlobServiceClient(ConnectionString);
-        var containerClient = blobServiceClient.GetBlobContainerClient("readingnotes");
+        var containerClient = blobClient.GetBlobContainerClient("readingnotes");
         await containerClient.CreateIfNotExistsAsync();
         return containerClient;
     }

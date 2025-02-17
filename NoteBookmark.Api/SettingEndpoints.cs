@@ -1,4 +1,6 @@
 using System;
+using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
 
@@ -21,17 +23,21 @@ public static class SettingEndpoints
             .WithDescription("Save updated settings");
 	}
 
-	static async Task<string> GetNextReadingNotesCounter(IDataStorageService dataStorageService)
+
+
+	static async Task<string> GetNextReadingNotesCounter(TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+        var dataStorageService = new DataStorageService(tblClient, blobClient);
         var settings = await dataStorageService.GetSettings();
         var counter = settings.ReadingNotesCounter ?? "0";
         return counter;
 	}
 
-    static async Task<Results<Ok, BadRequest>> SaveSettings(Settings settings, IDataStorageService dataStorageService)
+    static async Task<Results<Ok, BadRequest>> SaveSettings(Settings settings, TableServiceClient tblClient, BlobServiceClient blobClient)
     {
         try
         {
+            var dataStorageService = new DataStorageService(tblClient, blobClient);
             var result = await dataStorageService.SaveSettings(settings);
             return result ? TypedResults.Ok() : TypedResults.BadRequest();
         }
@@ -42,8 +48,9 @@ public static class SettingEndpoints
         }
     }
 
-    static async Task<Results<Ok<Settings>, BadRequest>> GetSettings(IDataStorageService dataStorageService)
+    static async Task<Results<Ok<Settings>, BadRequest>> GetSettings(TableServiceClient tblClient, BlobServiceClient blobClient)
     {
+        var dataStorageService = new DataStorageService(tblClient, blobClient);
         var settings = await dataStorageService.GetSettings();
         return settings != null ? TypedResults.Ok(settings) : TypedResults.BadRequest();
     }

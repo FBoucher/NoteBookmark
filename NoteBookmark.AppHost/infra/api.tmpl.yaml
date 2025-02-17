@@ -21,8 +21,10 @@ properties:
       - server: {{ .Env.AZURE_CONTAINER_REGISTRY_ENDPOINT }}
         identity: {{ .Env.AZURE_CONTAINER_REGISTRY_MANAGED_IDENTITY_ID }}
     secrets:
-      - name: data-storage-connstr
-        value: '{{ securedParameter "data_storage_connstr" }}'
+      - name: connectionstrings--nb-blobs
+        value: '{{ .Env.NB_STORAGE_BLOBENDPOINT }}'
+      - name: connectionstrings--nb-tables
+        value: '{{ .Env.NB_STORAGE_TABLEENDPOINT }}'
   template:
     containers:
       - image: {{ .Image }}
@@ -40,13 +42,12 @@ properties:
             value: "true"
           - name: OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY
             value: in_memory
-          - name: data-storage-connstr
-            secretRef: data-storage-connstr
-        resources:
-          cpu: 0.25
-          memory: 0.5Gi
+          - name: ConnectionStrings__nb-blobs
+            secretRef: connectionstrings--nb-blobs
+          - name: ConnectionStrings__nb-tables
+            secretRef: connectionstrings--nb-tables
     scale:
-      minReplicas: 0
+      minReplicas: 1
 tags:
   azd-service-name: api
   aspire-resource-name: api

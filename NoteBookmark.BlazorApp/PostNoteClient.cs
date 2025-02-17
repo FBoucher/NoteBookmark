@@ -60,7 +60,7 @@ public class PostNoteClient(HttpClient httpClient)
 
         foreach (var note in notes)
         {
-            var tags = note.Tags!.ToLower().Split(',');
+            var tags = note.Tags?.ToLower().Split(',') ?? Array.Empty<string>();
             
             if(string.IsNullOrEmpty(note.Category)){
                 note.Category = NoteCategories.GetCategory(tags[0]);

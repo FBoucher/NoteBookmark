@@ -42,8 +42,8 @@ properties:
           - name: services__api__https__0
             value: https://api.internal.{{ .Env.AZURE_CONTAINER_APPS_ENVIRONMENT_DEFAULT_DOMAIN }}
         resources:
-          cpu: 0.25
-          memory: 0.5Gi
+          cpu: 0.5
+          memory: 1.0Gi
     scale:
       minReplicas: 0
 tags:

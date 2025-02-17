@@ -1,3 +1,5 @@
+using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NoteBookmark.Domain;
 
@@ -19,15 +21,17 @@ public static class SummaryEndpoints
 		endpoints.MapPost("/summary", SaveSummary)
 			.WithDescription("Create or update the summary");
 	}
-	static List<Summary> GetSummaries(IDataStorageService dataStorageService)
+	static List<Summary> GetSummaries(TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		return dataStorageService.GetSummaries();
 	}
 
-	static Results<Created<Summary>, BadRequest> SaveSummary(Summary summary, IDataStorageService dataStorageService)
+	static Results<Created<Summary>, BadRequest> SaveSummary(Summary summary, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		try
 		{
+			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			var response = dataStorageService.SaveSummary(summary);
 			return TypedResults.Created($"/api/summary/{summary.RowKey}", summary);
 		}
@@ -39,8 +43,9 @@ public static class SummaryEndpoints
 	}
 
 	// Get a ReadingNote by number and return it as a results object
-	static async Task<Results<Ok<ReadingNotes>, NotFound>> GetReadingNotes(string number, IDataStorageService dataStorageService)
+	static async Task<Results<Ok<ReadingNotes>, NotFound>> GetReadingNotes(string number, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		var readingNotes = await dataStorageService.GetReadingNotes(number);
 		if (readingNotes == null)
 		{
