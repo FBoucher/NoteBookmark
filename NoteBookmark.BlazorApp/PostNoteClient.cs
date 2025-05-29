@@ -11,6 +11,12 @@ public class PostNoteClient(HttpClient httpClient)
         return posts ?? new List<PostL>();
     }
 
+    public async Task<List<PostL>> GetReadPosts()
+    {
+        var posts = await httpClient.GetFromJsonAsync<List<PostL>>("api/posts/read");
+        return posts ?? new List<PostL>();
+    }
+
     public async Task<List<Summary>> GetSummaries()
     {
         var summaries = await httpClient.GetFromJsonAsync<List<Summary>>("api/summary");

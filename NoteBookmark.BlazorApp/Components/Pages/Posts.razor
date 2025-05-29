@@ -1,6 +1,7 @@
 @page "/posts"
 @using NoteBookmark.BlazorApp.Components.Shared
 @using NoteBookmark.Domain
+@using Microsoft.FluentUI.AspNetCore.Components
 @inject PostNoteClient client
 @inject IJSRuntime jsRuntime
 @inject IToastService toastService
@@ -12,23 +13,29 @@
 
 <h1>Posts</h1>
 
-<FluentStack Orientation="Orientation.Horizontal">
-    <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size24.Add())" Title="Add new post"></FluentButton>
-    <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" style="width: 100%;"/>
+<FluentStack Orientation="Orientation.Vertical">
+    <FluentStack Orientation="Orientation.Horizontal">
+        <FluentButton OnClick="AddNewPost" IconEnd="@(new Icons.Regular.Size20.Add())" Title="Add new post"></FluentButton>
+        <FluentTextField @bind-Value="newPostUrl" Placeholder="Enter URL" style="width: 100%;"/>
+    </FluentStack>
+    <FluentSwitch ValueChanged="OnShowReadChanged" Label="Show">
+        <span slot="checked-message">Read Only</span>
+        <span slot="unchecked-message">UnRead Only</span>
+    </FluentSwitch>
 </FluentStack>
 
 <FluentDataGrid Id="postgrid" Items="@posts">
     <ChildContent>       
         <TemplateColumn Width="150px">
-            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size24.Open())" />
-            <FluentButton OnClick="@(() => EditNote(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Edit())" />
+            <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size20.Open())" />
+            <FluentButton OnClick="@(() => EditNote(context!.RowKey))" IconEnd="@(new Icons.Regular.Size20.Edit())" />
             @if (String.IsNullOrEmpty(context!.NoteId))
             {
-                <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size24.NoteAdd())" />
+                <FluentButton OnClick="@(async () => await CreateNoteForPost(context!.RowKey))"  IconEnd="@(new Icons.Regular.Size20.NoteAdd())" />
             }
             else
             {
-                <FluentButton IconEnd="@(new Icons.Filled.Size24.NoteEdit())" />
+                <FluentButton IconEnd="@(new Icons.Filled.Size20.NoteEdit())" />
             }
         </TemplateColumn>
         <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
@@ -38,11 +45,11 @@
                         IsDefaultSortColumn="true" 
                         Width="125px"/>
         <TemplateColumn Width="60px">   
-            <FluentButton OnClick="@(async () => await DeletePost(context!.RowKey))" IconEnd="@(new Icons.Regular.Size24.Delete())" />
+            <FluentButton OnClick="@(async () => await DeletePost(context!.RowKey))" IconEnd="@(new Icons.Regular.Size20.Delete())" />
         </TemplateColumn>
     </ChildContent>
     <EmptyContent>
-        <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
+        <FluentIcon Value="@(new Icons.Filled.Size20.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
     </EmptyContent>
 </FluentDataGrid>
 
@@ -51,6 +58,7 @@
     private IQueryable<PostL>? posts;
     private GridSort<PostL> defSort = GridSort<PostL>.ByDescending(c => c.Date_published);
     private string newPostUrl = string.Empty;
+    private bool showRead = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,8 +67,8 @@
 
     private async Task LoadPosts()
     {
-        List<PostL> urPosts = await client.GetUnreadPosts();
-        posts = urPosts.AsQueryable();
+        List<PostL> loadedPosts = showRead ? await client.GetReadPosts(): await client.GetUnreadPosts();
+        posts = loadedPosts.AsQueryable();
     }
 
     private async Task OpenUrlInNewWindow(string? url)
@@ -129,5 +137,12 @@
         {
             toastService.ShowError("Failed to delete post. Please try again.");
         }
+    }
+
+    // Add handler to reload posts when toggle changes
+    private async Task OnShowReadChanged(bool value)
+    {
+        showRead = value;
+        await LoadPosts();
     }
 }
