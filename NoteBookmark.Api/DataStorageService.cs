@@ -288,4 +288,23 @@ public class DataStorageService(TableServiceClient tblClient, BlobServiceClient 
         }
     }
 
+    public async Task<string> SaveReadingNotesMarkdown(string markdown, string number)
+    {
+        var containerClient = blobClient.GetBlobContainerClient("final-markdown");
+        await containerClient.CreateIfNotExistsAsync();
+        
+        var fileName = $"readingnotes-{number}.md";
+        var markdownBlobClient = containerClient.GetBlobClient(fileName);
+        
+        byte[] markdownBytes = Encoding.UTF8.GetBytes(markdown);
+        var response = await markdownBlobClient.UploadAsync(new MemoryStream(markdownBytes), overwrite: true);
+        
+        if (response.GetRawResponse().Status == 201 || response.GetRawResponse().Status == 200)
+        {
+            return markdownBlobClient.Uri.ToString();
+        }
+        
+        return string.Empty;
+    }
+
 }

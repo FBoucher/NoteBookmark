@@ -202,8 +202,8 @@ else{
     private void DeleteReadingNote(string category, string RowKey)
     {
         readingNotes!.Notes[category].RemoveAll(x => x.RowKey == RowKey);
-    }
-
+    }    
+    
     private async Task Publish()
     {
         if (readingNotes is not null)
@@ -213,6 +213,18 @@ else{
                 toastService.ShowError("Published Url is required to publish.");
                 return;
             }
+            
+            // Save markdown to blob storage only if readingNotesMD is not null or empty
+            if (!string.IsNullOrWhiteSpace(readingNotesMD))
+            {
+                var markdownSaved = await client.SaveReadingNotesMarkdown(readingNotesMD, readingNotes.Number);
+                if (!markdownSaved)
+                {
+                    toastService.ShowError("Failed to save markdown file.");
+                    return;
+                }
+            }
+            
             await HandleValidSubmit();
             var settings = await client.GetSettings();
             if (settings is not null)
@@ -226,6 +238,8 @@ else{
                     await client.SaveSettings(settings);
                 }
             }
+            
+            toastService.ShowSuccess("Reading notes published successfully!");
         }
     }
 }
