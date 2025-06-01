@@ -150,4 +150,11 @@ public class PostNoteClient(HttpClient httpClient)
         var response = await httpClient.DeleteAsync($"api/posts/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> SaveReadingNotesMarkdown(string markdown, string number)
+    {
+        var request = new { Markdown = markdown };
+        var response = await httpClient.PostAsJsonAsync($"api/summary/{number}/markdown", request);
+        return response.IsSuccessStatusCode;
+    }
 }
