@@ -32,4 +32,6 @@ public interface IDataStorageService
 	public Task UpdatePostReadStatus();
 
     public bool DeletePost(string rowKey);
+
+    public Task<string> SaveReadingNotesMarkdown(string markdown, string number);
 }

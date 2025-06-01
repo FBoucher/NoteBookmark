@@ -20,6 +20,9 @@ public static class SummaryEndpoints
 
 		endpoints.MapPost("/summary", SaveSummary)
 			.WithDescription("Create or update the summary");
+
+		endpoints.MapPost("/{number}/markdown", SaveReadingNotesMarkdown)
+			.WithDescription("Save reading notes as markdown to blob storage");
 	}
 	static List<Summary> GetSummaries(TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
@@ -54,4 +57,25 @@ public static class SummaryEndpoints
 		return TypedResults.Ok(readingNotes);
 	}
 
+	static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotesMarkdown(string number, MarkdownRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
+	{
+		try
+		{
+			var dataStorageService = new DataStorageService(tblClient, blobClient);
+			var url = await dataStorageService.SaveReadingNotesMarkdown(request.Markdown, number);
+			if (string.IsNullOrEmpty(url))
+			{
+				return TypedResults.BadRequest();
+			}
+			return TypedResults.Ok(url);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred while saving the markdown: {ex.Message}");
+			return TypedResults.BadRequest();
+		}
+	}
+
 }
+
+public record MarkdownRequest(string Markdown);

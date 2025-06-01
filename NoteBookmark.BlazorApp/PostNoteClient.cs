@@ -11,6 +11,12 @@ public class PostNoteClient(HttpClient httpClient)
         return posts ?? new List<PostL>();
     }
 
+    public async Task<List<PostL>> GetReadPosts()
+    {
+        var posts = await httpClient.GetFromJsonAsync<List<PostL>>("api/posts/read");
+        return posts ?? new List<PostL>();
+    }
+
     public async Task<List<Summary>> GetSummaries()
     {
         var summaries = await httpClient.GetFromJsonAsync<List<Summary>>("api/summary");
@@ -142,6 +148,13 @@ public class PostNoteClient(HttpClient httpClient)
     public async Task<bool> DeletePost(string id)
     {
         var response = await httpClient.DeleteAsync($"api/posts/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> SaveReadingNotesMarkdown(string markdown, string number)
+    {
+        var request = new { Markdown = markdown };
+        var response = await httpClient.PostAsJsonAsync($"api/summary/{number}/markdown", request);
         return response.IsSuccessStatusCode;
     }
 }

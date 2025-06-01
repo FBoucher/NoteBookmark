@@ -17,6 +17,8 @@ public static class PostEndpoints
 
 		endpoints.MapGet("/", GetUnreadPosts)
 			.WithDescription("Get all unread posts");
+		endpoints.MapGet("/read", GetReadPosts)
+			.WithDescription("Get all read posts");
 		endpoints.MapGet("/{id}", Get)
 			.WithDescription("Get a post by id");
 		endpoints.MapPost("/", SavePost)
@@ -31,6 +33,12 @@ public static class PostEndpoints
 	{
 		var dataStorageService = new DataStorageService(tblClient, blobClient);
 		return dataStorageService.GetFilteredPosts("is_read eq false");
+	}
+
+	static List<PostL> GetReadPosts(TableServiceClient tblClient, BlobServiceClient blobClient)
+	{
+		var dataStorageService = new DataStorageService(tblClient, blobClient);
+		return dataStorageService.GetFilteredPosts("is_read eq true");
 	}
 
 	static Results<Ok<Post>, NotFound> Get(string id, TableServiceClient tblClient, BlobServiceClient blobClient)

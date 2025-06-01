@@ -71,6 +71,8 @@ public class ReadingNotes
         md.Append(Title + Environment.NewLine);
         md.Append('=', Title.Length);
 
+        md.Append(Environment.NewLine + Environment.NewLine + (this.Intro ?? "") + Environment.NewLine);
+
         //== All Notes
         foreach (var key in this.Notes.Keys)
         {
