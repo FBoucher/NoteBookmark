@@ -21,8 +21,11 @@ else{
         <FluentTab Label=" Edit Summary" Icon="@(new Icons.Regular.Size20.FormSparkle())" Id="tabEdit">
             <EditForm Model="@readingNotes"  OnValidSubmit="@HandleValidSubmit" FormName="new_readingNotes">
                 <FluentStack Orientation="Orientation.Vertical" Width="100%">
-                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+                    
+                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save as Draft</FluentButton>
+                    
                     <DataAnnotationsValidator />
+
                     <div style="width: 80%;">
                         <FluentTextField Label="Title" @bind-Value="readingNotes!.Title"/>
                     </div>
@@ -31,6 +34,9 @@ else{
                     </div>
                     <div style="width: 80%;">
                         <FluentTextField Label="Published Url" @bind-Value="@readingNotes!.PublishedUrl" style="width: 80%;"/>
+                    </div>
+                    <div style="width: 80%;">
+                        <FluentTextArea Placeholder="Introduction" @bind-Value=@readingNotes.Intro Cols="100" Rows="5"></FluentTextArea>
                     </div>
 
                     <div>
@@ -74,19 +80,19 @@ else{
                     <FluentValidationSummary />
                 </div>
                 <FluentButton OnClick="@(async () => await Publish())" Type="ButtonType.Button" Appearance="Appearance.Lightweight">Publish</FluentButton> | 
-                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save as Draft</FluentButton>
             </EditForm>
 
         </FluentTab>
 
         <FluentTab Label=" Markdown" Icon="@(new Icons.Regular.Size20.Markdown())" Id="tabMD">
             <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This Markdown is generated from the form.</FluentLabel>
-            <FluentTextArea Value="@readingNotesMD" ReadOnly="true" Cols="100" Rows="30"/>
+            <FluentTextArea Value="@readingNotesMD" Cols="100" Rows="30"/>
         </FluentTab>
 
         <FluentTab Label=" Html" Icon="@(new Icons.Regular.Size20.Code())" Id="tabHTML">
             <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This HTML is generated from the Markdown.</FluentLabel>
-            <FluentTextArea Value="@readingNotesHTML" ReadOnly="true" Cols="100" Rows="30"/>
+            <FluentTextArea Value="@readingNotesHTML" Cols="100" Rows="30"/>
         </FluentTab>
 
     </FluentTabs>
@@ -200,15 +206,20 @@ else{
 
     private async Task Publish()
     {
-        if(readingNotes is not null)
+        if (readingNotes is not null)
         {
+            if (string.IsNullOrWhiteSpace(readingNotes.PublishedUrl))
+            {
+                toastService.ShowError("Published Url is required to publish.");
+                return;
+            }
             await HandleValidSubmit();
             var settings = await client.GetSettings();
-            if(settings is not null)
+            if (settings is not null)
             {
                 var cnt = Convert.ToInt32(settings!.ReadingNotesCounter);
                 // Only increment if the current Summary is the most recent one.
-                if(cnt == Convert.ToInt32(readingNotes!.Number))
+                if (cnt == Convert.ToInt32(readingNotes!.Number))
                 {
                     cnt++;
                     settings.ReadingNotesCounter = (cnt).ToString();
