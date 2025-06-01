@@ -86,12 +86,10 @@ else{
         </FluentTab>
 
         <FluentTab Label=" Markdown" Icon="@(new Icons.Regular.Size20.Markdown())" Id="tabMD">
-            <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This Markdown is generated from the form.</FluentLabel>
-            <FluentTextArea Value="@readingNotesMD" Cols="100" Rows="30"/>
+            <FluentTextArea @bind-Value="@readingNotesMD" Cols="100" Rows="30"/>
         </FluentTab>
 
         <FluentTab Label=" Html" Icon="@(new Icons.Regular.Size20.Code())" Id="tabHTML">
-            <FluentLabel Typo="Typography.Body" Color="@Color.Disabled"> Read Only: This HTML is generated from the Markdown.</FluentLabel>
             <FluentTextArea Value="@readingNotesHTML" Cols="100" Rows="30"/>
         </FluentTab>
 
