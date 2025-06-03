@@ -52,6 +52,14 @@ public static class PostEndpoints
 	{
 		var dataStorageService = new DataStorageService(tblClient, blobClient);
 			
+		if (string.IsNullOrWhiteSpace(post.PartitionKey) ||
+			string.IsNullOrWhiteSpace(post.RowKey) ||
+			string.IsNullOrWhiteSpace(post.Title) ||
+			string.IsNullOrWhiteSpace(post.Url))
+		{
+			return TypedResults.BadRequest();
+		}
+
 		if (dataStorageService.SavePost(post))
 		{
 			return TypedResults.Ok();

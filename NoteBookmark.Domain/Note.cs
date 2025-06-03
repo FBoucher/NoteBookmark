@@ -4,11 +4,11 @@ using Azure.Data.Tables;
 namespace NoteBookmark.Domain;
 
 public class Note : ITableEntity
-{
-    public Note()
+{    public Note()
     {
         PartitionKey = DateTime.UtcNow.ToString("yyyy-MM");
         RowKey = Guid.NewGuid().ToString();
+        DateAdded = DateTime.UtcNow;
     }
 
 

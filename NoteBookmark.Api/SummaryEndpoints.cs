@@ -30,12 +30,22 @@ public static class SummaryEndpoints
 		return dataStorageService.GetSummaries();
 	}
 
-	static Results<Created<Summary>, BadRequest> SaveSummary(Summary summary, TableServiceClient tblClient, BlobServiceClient blobClient)
+	static async Task<Results<Created<Summary>, BadRequest>> SaveSummary(Summary summary, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		try
 		{
+			if (string.IsNullOrWhiteSpace(summary.PartitionKey) ||
+				string.IsNullOrWhiteSpace(summary.RowKey) ||
+				string.IsNullOrWhiteSpace(summary.Title))
+			{
+				return TypedResults.BadRequest();
+			}
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
-			var response = dataStorageService.SaveSummary(summary);
+			var result = await dataStorageService.SaveSummary(summary);
+			if (!result)
+			{
+				return TypedResults.BadRequest();
+			}
 			return TypedResults.Created($"/api/summary/{summary.RowKey}", summary);
 		}
 		catch (Exception ex)
@@ -62,6 +72,10 @@ public static class SummaryEndpoints
 		try
 		{
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
+			if (string.IsNullOrWhiteSpace(request.Markdown))
+			{
+				return TypedResults.BadRequest();
+			}
 			var url = await dataStorageService.SaveReadingNotesMarkdown(request.Markdown, number);
 			if (string.IsNullOrEmpty(url))
 			{
