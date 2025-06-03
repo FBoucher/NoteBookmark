@@ -24,7 +24,7 @@
     </FluentSwitch>
 </FluentStack>
 
-<FluentDataGrid Id="postgrid" Items="@posts">
+<FluentDataGrid Id="postgrid" Items="@filteredUrlList" Pagination="@pagination">
     <ChildContent>       
         <TemplateColumn Width="150px">
             <FluentButton OnClick="@(async () => await OpenUrlInNewWindow(context!.Url))" IconEnd="@(new Icons.Regular.Size20.Open())" />
@@ -38,7 +38,13 @@
                 <FluentButton IconEnd="@(new Icons.Filled.Size20.NoteEdit())" />
             }
         </TemplateColumn>
-        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"/>
+        <PropertyColumn Title="Title" Property="@(c => c!.Title)" Sortable="true"  Filtered="!string.IsNullOrWhiteSpace(titleFilter)" >
+            <ColumnOptions>
+                    <div class="search-box">
+                        <FluentSearch type="search" Autofocus=true @bind-Value=titleFilter @oninput="HandleTitleFilter" @bind-Value:after="HandleClearTitleFilter" Placeholder="contains..." />
+                    </div>
+            </ColumnOptions>
+        </PropertyColumn>
         <PropertyColumn Title="Published" 
                         Property="@(c => (c!.Date_published ?? "0000-00-00").Substring(0,10))"  
                         Sortable="true" SortBy="@defSort" 
@@ -52,13 +58,17 @@
         <FluentIcon Value="@(new Icons.Filled.Size20.Crown())" Color="@Color.Accent" />&nbsp; Nothing to see here. Carry on!
     </EmptyContent>
 </FluentDataGrid>
+<FluentPaginator State="@pagination" />
 
 
 @code {
     private IQueryable<PostL>? posts;
+    IQueryable<PostL>? filteredUrlList => posts?.Where(x => x.Title!.Contains(titleFilter, StringComparison.CurrentCultureIgnoreCase));
     private GridSort<PostL> defSort = GridSort<PostL>.ByDescending(c => c.Date_published);
     private string newPostUrl = string.Empty;
     private bool showRead = false;
+    private PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    private string titleFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,5 +154,21 @@
     {
         showRead = value;
         await LoadPosts();
+    }
+
+    private void HandleTitleFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            titleFilter = value;
+        }
+    }
+
+    private void HandleClearTitleFilter()
+    {
+        if (string.IsNullOrWhiteSpace(titleFilter))
+        {
+            titleFilter = string.Empty;
+        }
     }
 }
