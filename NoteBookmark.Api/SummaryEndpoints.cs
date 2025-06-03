@@ -54,7 +54,6 @@ public static class SummaryEndpoints
 			return TypedResults.BadRequest();
 		}
 	}
-
 	// Get a ReadingNote by number and return it as a results object
 	static async Task<Results<Ok<ReadingNotes>, NotFound>> GetReadingNotes(string number, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
@@ -66,17 +65,21 @@ public static class SummaryEndpoints
 		}
 		return TypedResults.Ok(readingNotes);
 	}
-
-	static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotesMarkdown(string number, MarkdownRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
+	static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotesMarkdown(string number, HttpRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		try
 		{
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
-			if (string.IsNullOrWhiteSpace(request.Markdown))
+			
+			// Read markdown content from request body
+			using var reader = new StreamReader(request.Body);
+			var markdown = await reader.ReadToEndAsync();
+			
+			if (string.IsNullOrWhiteSpace(markdown))
 			{
 				return TypedResults.BadRequest();
 			}
-			var url = await dataStorageService.SaveReadingNotesMarkdown(request.Markdown, number);
+			var url = await dataStorageService.SaveReadingNotesMarkdown(markdown, number);
 			if (string.IsNullOrEmpty(url))
 			{
 				return TypedResults.BadRequest();

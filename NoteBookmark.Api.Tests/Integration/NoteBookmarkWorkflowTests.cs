@@ -133,22 +133,21 @@ public class NoteBookmarkWorkflowTests : IClassFixture<NoteBookmarkApiTestFactor
 
     [Fact]
     public async Task PostFilteringWorkflow_ReadAndUnreadPosts_WorksCorrectly()
-    {
-        // Step 1: Create mix of read and unread posts
+    {        // Step 1: Create mix of read and unread posts
         var readPost = TestDataBuilder.Post()
             .WithRowKey("read-post-workflow")
             .WithTitle("Read Post")
+            .WithUrl("https://example.com/read-post")
             .AsRead()
             .Build();
 
         var unreadPost = TestDataBuilder.Post()
             .WithRowKey("unread-post-workflow")
             .WithTitle("Unread Post")
+            .WithUrl("https://example.com/unread-post")
             .AsUnread()
-            .Build();
-
-        await _client.PostAsJsonAsync("/api/posts/SavePost/", readPost);
-        await _client.PostAsJsonAsync("/api/posts/SavePost/", unreadPost);
+            .Build();await _client.PostAsJsonAsync("/api/posts/", readPost);
+        await _client.PostAsJsonAsync("/api/posts/", unreadPost);
 
         // Step 2: Get unread posts
         var unreadResponse = await _client.GetAsync("/api/posts/");
@@ -165,14 +164,12 @@ public class NoteBookmarkWorkflowTests : IClassFixture<NoteBookmarkApiTestFactor
 
     [Fact]
     public async Task PostDeletionWorkflow_DeletePost_WorksCorrectly()
-    {
-        // Step 1: Create a post
+    {        // Step 1: Create a post
         var post = TestDataBuilder.Post()
             .WithRowKey("post-to-delete")
             .WithTitle("Post for Deletion Test")
-            .Build();
-
-        var createResponse = await _client.PostAsJsonAsync("/api/posts/SavePost", post);
+            .WithUrl("https://example.com/post-to-delete")
+            .Build();var createResponse = await _client.PostAsJsonAsync("/api/posts/", post);
         createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Step 2: Verify post exists
@@ -190,15 +187,18 @@ public class NoteBookmarkWorkflowTests : IClassFixture<NoteBookmarkApiTestFactor
 
     [Fact]
     public async Task UpdatePostReadStatusWorkflow_UpdatesCorrectly()
-    {
-        // Step 1: Create posts
+    {        // Step 1: Create posts
         var post1 = TestDataBuilder.Post()
             .WithRowKey("post-for-read-status-1")
+            .WithTitle("Post 1")
+            .WithUrl("https://example.com/post-1")
             .AsUnread()
             .Build();
 
         var post2 = TestDataBuilder.Post()
             .WithRowKey("post-for-read-status-2")
+            .WithTitle("Post 2")
+            .WithUrl("https://example.com/post-2")
             .AsUnread()
             .Build();
 
@@ -228,10 +228,17 @@ public class NoteBookmarkWorkflowTests : IClassFixture<NoteBookmarkApiTestFactor
 
     [Fact]
     public async Task MultipleNotesForSameReadingNotes_WorksCorrectly()
-    {
-        // Step 1: Create multiple posts
-        var post1 = TestDataBuilder.Post().WithRowKey("multi-note-post-1").Build();
-        var post2 = TestDataBuilder.Post().WithRowKey("multi-note-post-2").Build();
+    {        // Step 1: Create multiple posts
+        var post1 = TestDataBuilder.Post()
+            .WithRowKey("multi-note-post-1")
+            .WithTitle("Multi Note Post 1")
+            .WithUrl("https://example.com/multi-post-1")
+            .Build();
+        var post2 = TestDataBuilder.Post()
+            .WithRowKey("multi-note-post-2")
+            .WithTitle("Multi Note Post 2")
+            .WithUrl("https://example.com/multi-post-2")
+            .Build();
         
         await _client.PostAsJsonAsync("/api/posts/", post1);
         await _client.PostAsJsonAsync("/api/posts/", post2);
