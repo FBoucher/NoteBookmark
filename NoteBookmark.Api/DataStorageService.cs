@@ -227,17 +227,31 @@ public class DataStorageService(TableServiceClient tblClient, BlobServiceClient 
         }
 
         return client.GetBlobClient(name).Uri.ToString();
-    }
-
-    public async Task<ReadingNotes> GetReadingNotes(string number)
+    }    public async Task<ReadingNotes?> GetReadingNotes(string number)
     {
-        var client = await GetReadingNotesContainer();
-        var name = $"readingnotes-{number}.json";
-        var blobClient = client.GetBlobClient(name);
-        var response = await blobClient.DownloadAsync();
-        var stream = response.Value.Content;
-        var readingNotes = await JsonSerializer.DeserializeAsync<ReadingNotes>(stream);
-        return readingNotes!;
+        try
+        {
+            var client = await GetReadingNotesContainer();
+            var name = $"readingnotes-{number}.json";
+            var blobClient = client.GetBlobClient(name);
+            
+            // Check if blob exists before trying to download
+            var exists = await blobClient.ExistsAsync();
+            if (!exists.Value)
+            {
+                return null;
+            }
+            
+            var response = await blobClient.DownloadAsync();
+            var stream = response.Value.Content;
+            var readingNotes = await JsonSerializer.DeserializeAsync<ReadingNotes>(stream);
+            return readingNotes;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving reading notes for number {number}: {ex.Message}");
+            return null;
+        }
     }
 
 

@@ -23,7 +23,7 @@ public interface IDataStorageService
 
 	public Task<string> SaveReadingNotes(ReadingNotes readingNotes);
 
-	public Task<ReadingNotes> GetReadingNotes(string number);
+	public Task<ReadingNotes?> GetReadingNotes(string number);
 
 	public Task<bool> SaveSummary(Summary summary);
 

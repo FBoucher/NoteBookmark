@@ -37,6 +37,14 @@ public static class SettingEndpoints
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(settings.PartitionKey) ||
+                string.IsNullOrWhiteSpace(settings.RowKey) ||
+                string.IsNullOrWhiteSpace(settings.LastBookmarkDate) ||
+                string.IsNullOrWhiteSpace(settings.ReadingNotesCounter))
+            {
+                return TypedResults.BadRequest();
+            }
+
             var dataStorageService = new DataStorageService(tblClient, blobClient);
             var result = await dataStorageService.SaveSettings(settings);
             return result ? TypedResults.Ok() : TypedResults.BadRequest();

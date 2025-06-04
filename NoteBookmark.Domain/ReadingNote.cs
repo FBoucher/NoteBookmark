@@ -19,7 +19,7 @@ public class ReadingNote
     private string? _category { get; set; }
     public string? Category
     {
-        get => string.IsNullOrWhiteSpace(_category) ? GetCategory() : _category;
+        get => _category;
         set { _category = value; }
     }
     public string? ReadingNotesID { get; set; }

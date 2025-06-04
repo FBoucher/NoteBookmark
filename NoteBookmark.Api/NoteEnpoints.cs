@@ -35,6 +35,11 @@ public static class NoteEnpoints
 	{
 		try
 		{
+			if (!note.Validate())
+			{
+				return TypedResults.BadRequest();
+			}
+			
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			dataStorageService.CreateNote(note);
 			var post = dataStorageService.GetPost(note.PostId!);
@@ -70,15 +75,23 @@ public static class NoteEnpoints
 		return notes == null ? TypedResults.NotFound() : TypedResults.Ok(notes);
 	}
 
-	private static async Task<Results<Created<string>, BadRequest>> SaveReadingNotes(ReadingNotes readingNotes, 
-														TableServiceClient tblClient, 
-														BlobServiceClient blobClient)
+	private static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotes(ReadingNotes readingNotes, 
+																								TableServiceClient tblClient, 
+																								BlobServiceClient blobClient)
 	{
 		try
 		{
+			if (readingNotes == null || string.IsNullOrWhiteSpace(readingNotes.Number) || string.IsNullOrWhiteSpace(readingNotes.Title))
+			{
+				return TypedResults.BadRequest();
+			}
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
 			var url = await dataStorageService.SaveReadingNotes(readingNotes);
-			return url == null ? TypedResults.BadRequest() : TypedResults.Created("url", url);
+			if (string.IsNullOrEmpty(url))
+			{
+				return TypedResults.BadRequest();
+			}
+			return TypedResults.Ok(url);
 		}
 		catch (Exception ex)
 		{
