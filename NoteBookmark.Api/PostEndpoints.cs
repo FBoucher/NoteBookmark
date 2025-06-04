@@ -52,20 +52,27 @@ public static class PostEndpoints
 	{
 		var dataStorageService = new DataStorageService(tblClient, blobClient);
 			
+		if (string.IsNullOrWhiteSpace(post.PartitionKey) ||
+			string.IsNullOrWhiteSpace(post.RowKey) ||
+			string.IsNullOrWhiteSpace(post.Title) ||
+			string.IsNullOrWhiteSpace(post.Url))
+		{
+			return TypedResults.BadRequest();
+		}
+
 		if (dataStorageService.SavePost(post))
 		{
 			return TypedResults.Ok();
 		}
 		return TypedResults.BadRequest();
 	}
-
-	static async Task<Results<Ok<Post>, BadRequest>> ExtractPostDetails(string url, TableServiceClient tblClient, BlobServiceClient blobClient)
+	static async Task<Results<Ok<Post>, BadRequest>> ExtractPostDetails(ExtractPostRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		var dataStorageService = new DataStorageService(tblClient, blobClient);
-			
+
 		try
 		{
-			var post = await ExtractPostDetailsFromUrl(url);
+			var post = await ExtractPostDetailsFromUrl(request.url);
 			if (post != null)
 			{
 				dataStorageService.SavePost(post);
@@ -130,7 +137,8 @@ public static class PostEndpoints
 			RowKey = postGuid,
 			Id = postGuid
 		};
-
 		return post;
     }
 }
+
+public record ExtractPostRequest(string url, string? tags = null, string? category = null);

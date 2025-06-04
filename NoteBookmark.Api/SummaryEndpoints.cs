@@ -30,12 +30,22 @@ public static class SummaryEndpoints
 		return dataStorageService.GetSummaries();
 	}
 
-	static Results<Created<Summary>, BadRequest> SaveSummary(Summary summary, TableServiceClient tblClient, BlobServiceClient blobClient)
+	static async Task<Results<Created<Summary>, BadRequest>> SaveSummary(Summary summary, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		try
 		{
+			if (string.IsNullOrWhiteSpace(summary.PartitionKey) ||
+				string.IsNullOrWhiteSpace(summary.RowKey) ||
+				string.IsNullOrWhiteSpace(summary.Title))
+			{
+				return TypedResults.BadRequest();
+			}
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
-			var response = dataStorageService.SaveSummary(summary);
+			var result = await dataStorageService.SaveSummary(summary);
+			if (!result)
+			{
+				return TypedResults.BadRequest();
+			}
 			return TypedResults.Created($"/api/summary/{summary.RowKey}", summary);
 		}
 		catch (Exception ex)
@@ -44,7 +54,6 @@ public static class SummaryEndpoints
 			return TypedResults.BadRequest();
 		}
 	}
-
 	// Get a ReadingNote by number and return it as a results object
 	static async Task<Results<Ok<ReadingNotes>, NotFound>> GetReadingNotes(string number, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
@@ -56,13 +65,21 @@ public static class SummaryEndpoints
 		}
 		return TypedResults.Ok(readingNotes);
 	}
-
-	static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotesMarkdown(string number, MarkdownRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
+	static async Task<Results<Ok<string>, BadRequest>> SaveReadingNotesMarkdown(string number, HttpRequest request, TableServiceClient tblClient, BlobServiceClient blobClient)
 	{
 		try
 		{
 			var dataStorageService = new DataStorageService(tblClient, blobClient);
-			var url = await dataStorageService.SaveReadingNotesMarkdown(request.Markdown, number);
+			
+			// Read markdown content from request body
+			using var reader = new StreamReader(request.Body);
+			var markdown = await reader.ReadToEndAsync();
+			
+			if (string.IsNullOrWhiteSpace(markdown))
+			{
+				return TypedResults.BadRequest();
+			}
+			var url = await dataStorageService.SaveReadingNotesMarkdown(markdown, number);
 			if (string.IsNullOrEmpty(url))
 			{
 				return TypedResults.BadRequest();

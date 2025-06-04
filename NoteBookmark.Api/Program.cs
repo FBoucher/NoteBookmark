@@ -31,3 +31,6 @@ app.MapSummaryEndpoints();
 app.MapSettingEndpoints();
 
 app.Run();
+
+// Make the Program class accessible for testing
+public partial class Program { }

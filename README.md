@@ -1,6 +1,6 @@
 # Note Bookmark
 
-![GitHub Release](https://img.shields.io/github/v/release/fboucher/NoteBookmark)  ![.NET](https://img.shields.io/badge/9.0-512BD4?logo=dotnet&logoColor=fff)  [![.github/workflows/azure-dev.yml](https://github.com/FBoucher/NoteBookmark/actions/workflows/azure-dev.yml/badge.svg)](https://github.com/FBoucher/NoteBookmark/actions/workflows/azure-dev.yml) 
+![GitHub Release](https://img.shields.io/github/v/release/fboucher/NoteBookmark)  ![.NET](https://img.shields.io/badge/9.0-512BD4?logo=dotnet&logoColor=fff)  [![.github/workflows/azure-dev.yml](https://github.com/FBoucher/NoteBookmark/actions/workflows/azure-dev.yml/badge.svg)](https://github.com/FBoucher/NoteBookmark/actions/workflows/azure-dev.yml)  [![Unit Tests](https://github.com/FBoucher/NoteBookmark/actions/workflows/running-unit-tests.yml/badge.svg)](https://github.com/FBoucher/NoteBookmark/actions/workflows/running-unit-tests.yml)
 
 
 I use this project mostly everyday. I build it to help me collecting my thoughts about articles, and blob posts I read during the week and then aggregate them in a #ReadingNotes blog post. You can find those post on my blog [here](https://frankysnotes.com).
