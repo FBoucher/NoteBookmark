@@ -115,13 +115,21 @@
 
         try
         {
+            isSyncing = true;
             await client.SyncAsync();
             await LoadPosts();
-            StateHasChanged();
         }
         catch (Exception)
         {
             // Ignore background sync errors
+        }
+        finally
+        {
+            isSyncing = false;
+            syncProgressStatus = string.Empty;
+            syncProgressCurrent = 0;
+            syncProgressTotal = 0;
+            StateHasChanged();
         }
     }
 
@@ -287,6 +295,10 @@
         finally
         {
             isSyncing = false;
+            syncProgressStatus = string.Empty;
+            syncProgressCurrent = 0;
+            syncProgressTotal = 0;
+            StateHasChanged();
         }
     }
 

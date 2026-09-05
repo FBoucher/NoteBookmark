@@ -243,6 +243,8 @@ public class SyncService(
         var postMap = posts.ToDictionary(p => p.Id ?? p.RowKey);
         var cachedIds = localHtmlStorageService.GetCachedPostIds().ToHashSet();
 
+        SyncProgressChanged?.Invoke(this, new SyncProgressEventArgs(0, 0, "Cleaning..."));
+
         // Prune cached HTML for posts that are read or no longer exist
         foreach (var cachedId in cachedIds)
         {
@@ -258,7 +260,7 @@ public class SyncService(
 
         if (total > 0)
         {
-            SyncProgressChanged?.Invoke(this, new SyncProgressEventArgs(0, total, $"Downloading offline text (0/{total})..."));
+            SyncProgressChanged?.Invoke(this, new SyncProgressEventArgs(0, total, $"Downloading 0 of {total} posts..."));
 
             for (int i = 0; i < unreadToDownload.Count; i++)
             {
@@ -279,7 +281,7 @@ public class SyncService(
                 }
 
                 int current = i + 1;
-                SyncProgressChanged?.Invoke(this, new SyncProgressEventArgs(current, total, $"Downloading offline text ({current}/{total})..."));
+                SyncProgressChanged?.Invoke(this, new SyncProgressEventArgs(current, total, $"Downloading {current} of {total} posts..."));
             }
         }
     }

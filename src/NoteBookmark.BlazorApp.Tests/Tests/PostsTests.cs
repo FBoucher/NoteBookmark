@@ -133,5 +133,34 @@ public sealed class PostsTests : BunitContext
 
         cut.Markup.Should().Contain("Read post");
     }
+
+    [Fact]
+    public void Posts_DisplaysSyncProgress_WhenSyncProgressChangedFired()
+    {
+        var cut = Render<Posts>();
+
+        cut.InvokeAsync(() =>
+        {
+            _dataServiceMock.Raise(s => s.SyncProgressChanged += null, new SyncProgressEventArgs(1, 6, "Downloading 1 of 6 posts..."));
+        });
+
+        cut.Markup.Should().Contain("Downloading 1 of 6 posts...");
+        var progress = cut.FindComponent<FluentProgress>();
+        progress.Instance.Value.Should().Be(1);
+        progress.Instance.Max.Should().Be(6);
+    }
+
+    [Fact]
+    public void Posts_DisplaysCleaningStatus_WhenSyncProgressChangedFired()
+    {
+        var cut = Render<Posts>();
+
+        cut.InvokeAsync(() =>
+        {
+            _dataServiceMock.Raise(s => s.SyncProgressChanged += null, new SyncProgressEventArgs(0, 0, "Cleaning..."));
+        });
+
+        cut.Markup.Should().Contain("Cleaning...");
+    }
 }
 
