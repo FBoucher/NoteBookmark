@@ -9,7 +9,7 @@ This guide walks you through installing (often called "sideloading") the NoteBoo
 2. Tap on the **Actions** tab at the top.
 3. Select the latest successful **Build Android APK** run.
 4. Scroll down to the **Artifacts** section and download the **`notebookmark-android-apk`** ZIP file.
-5. Extract the ZIP file to retrieve the **`.apk`** installer file (e.g., `NoteBookmark.MauiApp.apk`).
+5. Extract the ZIP file to retrieve the **`.apk`** installer file (e.g., `c5m.notebookmark.mauiapp-v1.4.2-Signed.apk`).
 
 ---
 

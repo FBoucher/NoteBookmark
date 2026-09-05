@@ -48,6 +48,33 @@ jobs:
           ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
+      - name: Rename APK with version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION_NUM=$(grep -oPm1 "(?<=<ApplicationDisplayVersion>)[^<]+" src/NoteBookmark.MauiApp/NoteBookmark.MauiApp.csproj || true)
+            if [ -z "$VERSION_NUM" ]; then
+              VERSION_NUM=$(grep -oPm1 "(?<=<Version>)[^<]+" Directory.Build.props)
+            fi
+            VERSION="v${VERSION_NUM#v}"
+          fi
+          echo "Using version: $VERSION"
+
+          PUBLISH_DIR="src/NoteBookmark.MauiApp/bin/Release/net10.0-android/publish"
+          for apk in "$PUBLISH_DIR"/*.apk; do
+            if [ -f "$apk" ]; then
+              filename=$(basename "$apk")
+              if [[ "$filename" == *"-Signed.apk" ]]; then
+                new_filename="${filename%-Signed.apk}-${VERSION}-Signed.apk"
+              else
+                new_filename="${filename%.apk}-${VERSION}.apk"
+              fi
+              echo "Renaming $apk to $PUBLISH_DIR/$new_filename"
+              mv "$apk" "$PUBLISH_DIR/$new_filename"
+            fi
+          done
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:

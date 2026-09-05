@@ -466,7 +466,9 @@ public class SyncServiceTests
         await _sut.SyncAsync();
 
         progressEvents.Should().NotBeEmpty();
-        progressEvents.Should().Contain(e => e.Status.Contains("Downloading offline text"));
+        progressEvents.Should().Contain(e => e.Status == "Cleaning...");
+        progressEvents.Should().Contain(e => e.Status == "Downloading 1 of 2 posts..." && e.Current == 1 && e.Total == 2);
+        progressEvents.Should().Contain(e => e.Status == "Downloading 2 of 2 posts..." && e.Current == 2 && e.Total == 2);
         progressEvents.Last().Status.Should().Be("Synchronization complete!");
     }
 }
