@@ -34,7 +34,7 @@ public sealed class PostReaderTests : BunitContext
     }
 
     [Fact]
-    public void PostReader_RendersTitleAndContentAndSlider()
+    public void PostReader_RendersTitleAndContentAndSlidersAndBackButtonsAtTopAndBottom()
     {
         var cut = Render<PostReader>(ps => ps.Add(p => p.PostId, "p1"));
 
@@ -44,23 +44,43 @@ public sealed class PostReaderTests : BunitContext
         cut.Markup.Should().Contain("reader-content");
         cut.Markup.Should().Contain("Text size:");
 
-        var slider = cut.FindComponent<FluentSlider<int>>();
-        slider.Instance.Min.Should().Be(8);
-        slider.Instance.Max.Should().Be(56);
+        var sliders = cut.FindComponents<FluentSlider<int>>();
+        sliders.Should().HaveCount(2);
+        sliders[0].Instance.Min.Should().Be(8);
+        sliders[0].Instance.Max.Should().Be(56);
+        sliders[1].Instance.Min.Should().Be(8);
+        sliders[1].Instance.Max.Should().Be(56);
+
+        var backButtons = cut.FindComponents<FluentButton>()
+            .Where(b => b.Instance.Title == "Back to posts")
+            .ToList();
+        backButtons.Should().HaveCount(2);
     }
 
     [Fact]
-    public void PostReader_SliderValueChange_UpdatesContentFontSize()
+    public void PostReader_TopSliderValueChange_UpdatesContentFontSize()
     {
         var cut = Render<PostReader>(ps => ps.Add(p => p.PostId, "p1"));
 
         var contentDivBefore = cut.Find("div.reader-content");
         contentDivBefore.GetAttribute("style").Should().Contain("font-size: 16px;");
 
-        var slider = cut.FindComponent<FluentSlider<int>>();
-        cut.InvokeAsync(() => slider.Instance.ValueChanged.InvokeAsync(24));
+        var sliders = cut.FindComponents<FluentSlider<int>>();
+        cut.InvokeAsync(() => sliders[0].Instance.ValueChanged.InvokeAsync(24));
 
         var contentDivAfter = cut.Find("div.reader-content");
         contentDivAfter.GetAttribute("style").Should().Contain("font-size: 24px;");
+    }
+
+    [Fact]
+    public void PostReader_BottomSliderValueChange_UpdatesContentFontSize()
+    {
+        var cut = Render<PostReader>(ps => ps.Add(p => p.PostId, "p1"));
+
+        var sliders = cut.FindComponents<FluentSlider<int>>();
+        cut.InvokeAsync(() => sliders[1].Instance.ValueChanged.InvokeAsync(20));
+
+        var contentDivAfter = cut.Find("div.reader-content");
+        contentDivAfter.GetAttribute("style").Should().Contain("font-size: 20px;");
     }
 }
